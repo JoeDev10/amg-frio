@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Ilustración de una instalación de frío industrial">
+  <rect width="800" height="500" fill="#0B1F4D"/>
+  <rect x="70" y="150" width="280" height="230" rx="8" fill="#12315F"/>
+  <rect x="90" y="180" width="240" height="16" rx="4" fill="#1EC8F0"/>
+  <rect x="90" y="214" width="240" height="16" rx="4" fill="#1565C0"/>
+  <rect x="90" y="248" width="240" height="16" rx="4" fill="#1EC8F0" opacity="0.85"/>
+  <rect x="90" y="282" width="160" height="16" rx="4" fill="#1565C0"/>
+  <rect x="390" y="120" width="120" height="260" rx="10" fill="#1565C0"/>
+  <rect x="410" y="150" width="80" height="200" rx="6" fill="#0B1F4D"/>
+  <circle cx="450" cy="250" r="28" fill="none" stroke="#1EC8F0" stroke-width="8"/>
+  <path d="M530 180 H700 M530 230 H660 M530 280 H700" stroke="#1EC8F0" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="700" cy="180" r="14" fill="#1EC8F0"/>
+  <circle cx="660" cy="230" r="14" fill="#7ADFFF"/>
+  <circle cx="700" cy="280" r="14" fill="#1EC8F0"/>
+  <rect x="70" y="380" width="660" height="8" rx="4" fill="#1565C0"/>
+</svg>

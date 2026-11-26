@@ -1,0 +1,10 @@
+AMG Frío — copia lista
+Fecha: 2026-11-26
+
+Sin mapa (se sacó a propósito y no se vuelve a agregar).
+Incluye llamada visible, atajos de diagnóstico por WhatsApp, sección de cámaras
+frigoríficas ampliada, zonas de cobertura, SEO (canonical, Open Graph con imagen
+y schema con FAQ) y antes/después con placeholders, oculto hasta tener fotos reales.
+
+Para publicar: correr build_bundle.py y subir bundle/index.html junto con
+bundle/img/og-cover.jpg. Ver README.md.

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Ilustración de un compresor de refrigeración">
+  <rect width="800" height="500" fill="#0E2A5C"/>
+  <rect x="230" y="150" width="250" height="210" rx="28" fill="#1565C0"/>
+  <rect x="255" y="175" width="200" height="160" rx="16" fill="#0B1F4D"/>
+  <rect x="300" y="110" width="110" height="50" rx="10" fill="#1EC8F0"/>
+  <circle cx="355" cy="255" r="42" fill="none" stroke="#1EC8F0" stroke-width="10"/>
+  <path d="M140 210 H230 M480 200 H660 M480 300 H620" stroke="#7ADFFF" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="140" cy="210" r="16" fill="#1EC8F0"/>
+  <circle cx="660" cy="200" r="16" fill="#1EC8F0"/>
+  <circle cx="620" cy="300" r="16" fill="#1565C0" stroke="#7ADFFF" stroke-width="6"/>
+  <rect x="250" y="370" width="300" height="14" rx="7" fill="#12315F"/>
+</svg>
