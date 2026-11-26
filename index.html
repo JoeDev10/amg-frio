@@ -257,6 +257,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border-bottom: 1px solid #eef3f7;
 }
 .nav-dot { display: none; }
+/* El display del menú pisa el atributo hidden del UA; hay que respetarlo. */
+.site-nav [hidden] { display: none !important; }
 
 .hero {
   background:
@@ -834,8 +836,8 @@ section, .address-bar { scroll-margin-top: 140px; }
         <a href="#inicio" aria-current="page">Inicio</a>
         <span class="nav-dot" aria-hidden="true">·</span>
         <a href="#servicios">Servicios</a>
-        <span class="nav-dot" aria-hidden="true">·</span>
-        <a href="#trabajos">Trabajos</a>
+        <span class="nav-dot" data-nav-trabajos aria-hidden="true" hidden>·</span>
+        <a href="#trabajos" data-nav-trabajos hidden>Trabajos</a>
         <span class="nav-dot" aria-hidden="true">·</span>
         <a href="#contacto">Contacto</a>
       </nav>
@@ -929,7 +931,8 @@ section, .address-bar { scroll-margin-top: 140px; }
       </div>
     </section>
 
-    <section class="section" id="trabajos">
+    <!-- Visible solo si SITE_CONFIG.showTrabajos es true (cuando haya fotos reales). -->
+    <section class="section" id="trabajos" hidden>
       <div class="wrap">
         <h2>Trabajos</h2>
         <p class="lead">Pronto vas a ver fotos reales de cámaras, mantenimientos e instalaciones. No publicamos trabajos inventados.</p>
@@ -1131,6 +1134,8 @@ window.SITE_CONFIG = {
   /* Logos reales de clientes. Vacío hasta tener archivos. Cada ítem: { nombre, imagen, alt }. */
   showClientLogos: false,
   clientLogos: [],
+  /* Oculto hasta tener fotos reales de Martín. Poné true y cargá ítems en trabajos. */
+  showTrabajos: false,
   /* Cada trabajo real: { titulo, descripcion, imagen, alt }. Vacío hasta tener fotos. */
   trabajos: [],
   /*
@@ -1412,8 +1417,30 @@ window.SITE_CONFIG = {
     }
   }
 
+  var trabajosSection = document.getElementById("trabajos");
+  var trabajosNav = document.querySelectorAll("[data-nav-trabajos], a[href='#trabajos']");
+  if (!cfg.showTrabajos) {
+    if (trabajosSection) {
+      trabajosSection.hidden = true;
+      trabajosSection.setAttribute("hidden", "");
+    }
+    trabajosNav.forEach(function (el) {
+      el.hidden = true;
+      el.setAttribute("hidden", "");
+    });
+  } else {
+    if (trabajosSection) {
+      trabajosSection.hidden = false;
+      trabajosSection.removeAttribute("hidden");
+    }
+    trabajosNav.forEach(function (el) {
+      el.hidden = false;
+      el.removeAttribute("hidden");
+    });
+  }
+
   var trabajosGrid = document.getElementById("trabajos-grid");
-  if (trabajosGrid) {
+  if (trabajosGrid && cfg.showTrabajos) {
     var trabajos = cfg.trabajos || [];
     if (!trabajos.length) {
       trabajosGrid.innerHTML = [0, 1, 2].map(function () {
