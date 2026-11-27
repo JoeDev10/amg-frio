@@ -180,6 +180,7 @@
     if (cam.dimensionar) {
       setText("camaras-dim-titulo", cam.dimensionar.titulo);
       setText("camaras-dim-texto", cam.dimensionar.texto);
+      setText("camaras-dim-resumen", cam.dimensionar.resumen);
       fill("camaras-dim-items", (cam.dimensionar.items || []).map(function (d) {
         return "<li>" + esc(d) + "</li>";
       }).join(""));
@@ -413,19 +414,66 @@
     show(0);
   }
 
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+  var quieto = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* Entradas al hacer scroll. Los hijos de una grilla entran escalonados:
+     cada uno lleva --i y el CSS lo convierte en un retardo. */
+  if (!quieto.matches && "IntersectionObserver" in window) {
+    var GRILLAS = "#trust-list, #triage-grid, #service-grid, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
+
+    document.querySelectorAll(GRILLAS).forEach(function (grilla) {
+      var hijos = grilla.children;
+      for (var i = 0; i < hijos.length; i++) {
+        hijos[i].classList.add("rise");
+        hijos[i].style.setProperty("--i", Math.min(i, 8));
+      }
+    });
+
     var revealObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-in");
-          revealObserver.unobserve(entry.target);
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        el.classList.add("is-in");
+        revealObserver.unobserve(el);
+        /* Terminada la entrada sacamos las clases: dejan de pisar el
+           transition del hover, que si no quedaría lento y con retardo. */
+        if (el.classList.contains("rise")) {
+          var orden = parseInt(el.style.getPropertyValue("--i"), 10) || 0;
+          setTimeout(function () {
+            el.classList.remove("rise", "is-in");
+            el.style.removeProperty("--i");
+          }, 650 + orden * 70);
         }
       });
-    }, { threshold: 0.08 });
-    document.querySelectorAll("main .section").forEach(function (section) {
+    }, { threshold: 0.05, rootMargin: "0px 0px -40px 0px" });
+
+    document.querySelectorAll("main .section, .closer").forEach(function (section) {
       section.classList.add("reveal");
       revealObserver.observe(section);
     });
+    document.querySelectorAll(".rise").forEach(function (el) {
+      revealObserver.observe(el);
+    });
+  } else {
+    document.querySelectorAll(".rise, .reveal").forEach(function (el) {
+      el.classList.add("is-in");
+    });
+  }
+
+  /* El encabezado se achica apenas se baja, para dar aire. */
+  var header = document.querySelector(".site-header");
+  if (header) {
+    var ticking = false;
+    function marcarScroll() {
+      header.classList.toggle("is-stuck", window.scrollY > 40);
+      ticking = false;
+    }
+    window.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(marcarScroll);
+    }, { passive: true });
+    marcarScroll();
   }
 
   var reviews = document.getElementById("resenas");
@@ -444,12 +492,68 @@
     }
   }
 
+  /* Acordeón con apertura suave. El panel cerrado mantiene el atributo hidden
+     para que no lo lean los lectores de pantalla; la altura se anima a mano
+     porque no se puede hacer una transición desde hidden. */
+  /* Deja el panel como quedó: sin altura fija y, si corresponde, oculto.
+     Se llama al terminar la transición o por las dudas con un plazo, porque
+     si la transición no llega a arrancar transitionend nunca se dispara. */
+  function limpiarPanel(panel, ocultar) {
+    if (panel._fin) {
+      clearTimeout(panel._fin);
+      panel._fin = null;
+    }
+    panel.classList.remove("is-moving");
+    panel.style.height = "";
+    panel.style.overflow = "";
+    if (ocultar) panel.hidden = true;
+  }
+
+  function animarAlto(panel, desde, hasta, ocultarAlFinal) {
+    panel.classList.add("is-moving");
+    panel.style.overflow = "hidden";
+    panel.style.height = desde + "px";
+    /* Leer una medida obliga al navegador a aplicar la altura de arranque.
+       Sin esto agrupa los dos cambios y no hay transición que animar. */
+    void panel.offsetHeight;
+    panel.style.height = hasta + "px";
+
+    function fin(ev) {
+      if (ev && ev.propertyName !== "height") return;
+      panel.removeEventListener("transitionend", fin);
+      limpiarPanel(panel, ocultarAlFinal);
+    }
+    panel.addEventListener("transitionend", fin);
+    panel._fin = setTimeout(function () {
+      panel.removeEventListener("transitionend", fin);
+      limpiarPanel(panel, ocultarAlFinal);
+    }, 500);
+  }
+
+  function abrirPanel(panel) {
+    limpiarPanel(panel, false);
+    panel.hidden = false;
+    if (quieto.matches) return;
+    animarAlto(panel, 0, panel.scrollHeight, false);
+  }
+
+  function cerrarPanel(panel) {
+    limpiarPanel(panel, false);
+    if (quieto.matches) {
+      panel.hidden = true;
+      return;
+    }
+    animarAlto(panel, panel.scrollHeight, 0, true);
+  }
+
   document.querySelectorAll(".acc__btn").forEach(function (btn) {
     btn.addEventListener("click", function () {
       var panel = document.getElementById(btn.getAttribute("aria-controls"));
       var open = btn.getAttribute("aria-expanded") === "true";
       btn.setAttribute("aria-expanded", open ? "false" : "true");
-      if (panel) panel.hidden = open;
+      if (!panel) return;
+      if (open) cerrarPanel(panel);
+      else abrirPanel(panel);
     });
   });
 
@@ -558,7 +662,37 @@
         producto: (document.getElementById("producto") || {}).value || "",
         descripcion: values.descripcion
       });
+      if (window.fbq) window.fbq("track", "Lead");
       window.location.href = waLink(text);
+    });
+  }
+
+  /* Píxel de Meta.
+     Sin `metaPixelId` en config.js no se carga nada, no se pide ningún script
+     a Facebook y no se rastrea a nadie. Con el ID puesto, se avisa la visita
+     y cada clic en WhatsApp o en llamar. */
+  var pixelId = String(cfg.metaPixelId || "").replace(/\D/g, "");
+  if (pixelId) {
+    /* eslint-disable */
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = "2.0"; n.queue = [];
+      t = b.createElement(e); t.async = !0; t.src = v;
+      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+    /* eslint-enable */
+    window.fbq("init", pixelId);
+    window.fbq("track", "PageView");
+
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest && event.target.closest("a[href]");
+      if (!link || !window.fbq) return;
+      var href = link.getAttribute("href") || "";
+      if (href.indexOf("https://wa.me/") === 0 || href.indexOf("tel:") === 0) {
+        window.fbq("track", "Contact");
+      }
     });
   }
 })();

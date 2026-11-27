@@ -138,7 +138,15 @@ button, input, select, textarea { font: inherit; color: inherit; }
   background: #fff;
   border-bottom: 1px solid var(--line);
   height: var(--header-h);
+  transition: height 0.3s var(--salida, ease), box-shadow 0.3s ease;
 }
+/* Se achica apenas se baja, para dar aire al contenido. */
+.site-header.is-stuck {
+  height: 58px;
+  box-shadow: 0 6px 22px rgba(11, 31, 77, 0.1);
+}
+.brand__mark { transition: width 0.3s var(--salida, ease), height 0.3s var(--salida, ease); }
+.site-header.is-stuck .brand__mark { width: 34px; height: 34px; }
 
 .site-header__inner {
   height: 100%;
@@ -226,7 +234,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   position: absolute;
   left: 0;
   right: 0;
-  top: var(--header-h);
+  /* 100% y no --header-h: el encabezado se achica al bajar. */
+  top: 100%;
   background: #fff;
   border-bottom: 1px solid var(--line);
   padding: 8px 16px 16px;
@@ -234,7 +243,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   max-height: calc(100dvh - var(--header-h) - var(--callbar-h));
   overflow-y: auto;
 }
-.site-nav.is-open { display: block; }
+.site-nav.is-open { display: block; animation: entra 0.28s var(--salida) both; }
 .site-nav a {
   display: block;
   padding: 14px 8px;
@@ -308,6 +317,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
   position: relative;
   height: 230px;
   background: #12315f;
+  /* La animación de entrada agranda la imagen un 7 %: se recorta acá
+     para que no empuje el ancho de la página. */
+  overflow: hidden;
 }
 .hero__media img {
   width: 100%;
@@ -822,12 +834,94 @@ textarea[aria-invalid="true"] { border-color: var(--danger); }
 
 section, .address-bar { scroll-margin-top: 140px; }
 
-.reveal {
+/* ---- Entradas y transiciones ---- */
+/* Curva propia: arranca rápido y frena suave. */
+:root { --salida: cubic-bezier(0.22, 0.75, 0.3, 1); }
+
+/* El selector va repetido a propósito: así gana en especificidad a las reglas
+   de hover de más abajo, que si no le pisarían el transition con su shorthand.
+   Apenas termina la entrada, el JS saca las clases y el hover queda ágil. */
+.reveal.reveal,
+.rise.rise {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transform: translateY(22px);
+  transition:
+    opacity 0.6s var(--salida),
+    transform 0.6s var(--salida);
 }
-.reveal.is-in { opacity: 1; transform: none; }
+/* Los hijos de una grilla entran uno detrás de otro. --i lo pone el JS. */
+.rise.rise { transition-delay: calc(var(--i, 0) * 70ms); }
+.reveal.reveal.is-in,
+.rise.rise.is-in { opacity: 1; transform: none; }
+
+/* Entrada del inicio, al cargar */
+@keyframes entra {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes acerca {
+  from { transform: scale(1.07); }
+  to { transform: scale(1); }
+}
+.hero__copy > * { animation: entra 0.7s var(--salida) both; }
+.hero__eyebrow { animation-delay: 0.05s; }
+.hero h1 { animation-delay: 0.12s; }
+.hero__lead { animation-delay: 0.2s; }
+.hero__zone { animation-delay: 0.28s; }
+.hero__actions { animation-delay: 0.36s; }
+.hero__note { animation-delay: 0.44s; }
+.hero__media img { animation: acerca 1.5s var(--salida) both; }
+
+/* Levantar al pasar el mouse. Va después de .rise para ganarle en el orden. */
+.card,
+.triage__item,
+.plan,
+.choice,
+.panel,
+.zonas__list li {
+  transition:
+    transform 0.25s var(--salida),
+    box-shadow 0.25s var(--salida),
+    border-color 0.25s var(--salida),
+    background-color 0.25s var(--salida);
+}
+@media (hover: hover) {
+  .card:hover { transform: translateY(-5px); box-shadow: 0 24px 52px rgba(11, 31, 77, 0.2); }
+  .triage__item:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(11, 31, 77, 0.12); }
+  .plan:hover, .choice:hover, .panel:hover { transform: translateY(-3px); }
+  .zonas__list li:hover { background: var(--ice); border-color: var(--cyan); }
+  .btn-wa, .btn-call, .call-now { transition: transform 0.18s var(--salida), background-color 0.2s ease, color 0.2s ease; }
+  .btn-wa:hover, .btn-call:hover, .call-now:hover { transform: translateY(-2px); }
+}
+.btn-wa:active, .btn-call:active, .call-now:active, .triage__item:active { transform: translateY(1px); }
+
+/* Acordeón: la altura la anima el JS, acá va la curva. */
+.acc__panel { transition: height 0.32s var(--salida); }
+.acc__panel.is-moving { overflow: hidden; }
+
+/* Bloques desplegables «Ver más» */
+.more { margin-top: 16px; }
+.more summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--blue);
+  list-style: none;
+}
+.more summary::-webkit-details-marker { display: none; }
+.more summary::after {
+  content: "›";
+  font-size: 1.3rem;
+  line-height: 1;
+  transform: rotate(90deg);
+  transition: transform 0.25s var(--salida);
+}
+.more[open] summary::after { transform: rotate(-90deg); }
+.more[open] .more__body { animation: entra 0.35s var(--salida) both; }
+.more__body { padding-top: 4px; }
 
 .carousel__viewport { outline: none; }
 .carousel__slide h3 { margin: 0 0 12px; }
@@ -957,9 +1051,24 @@ section, .address-bar { scroll-margin-top: 140px; }
     border: 0;
     padding: 8px 5px;
     font-size: 0.97rem;
-    box-shadow: inset 0 -2px 0 transparent;
+    position: relative;
   }
-  .site-nav a[aria-current] { box-shadow: inset 0 -2px 0 var(--blue); }
+  /* Subrayado que se despliega desde la izquierda */
+  .site-nav a::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    bottom: 2px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--blue);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--salida);
+  }
+  .site-nav a:hover::after,
+  .site-nav a[aria-current]::after { transform: scaleX(1); }
   .nav-dot {
     display: inline;
     color: var(--blue);
@@ -1000,7 +1109,36 @@ section, .address-bar { scroll-margin-top: 140px; }
   .cards { grid-template-columns: repeat(3, 1fr); }
 }
 
+/* Quien pidió menos movimiento en su sistema no ve ninguna animación. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
+  .reveal.reveal,
+  .rise.rise {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero__copy > *,
+  .hero__media img,
+  .site-nav.is-open,
+  .more[open] .more__body { animation: none; }
+  .site-header,
+  .brand__mark,
+  .acc__panel,
+  .card,
+  .triage__item,
+  .plan,
+  .choice,
+  .panel,
+  .zonas__list li,
+  .site-nav a::after,
+  .more summary::after { transition: none; }
+  .card:hover,
+  .triage__item:hover,
+  .plan:hover,
+  .choice:hover,
+  .panel:hover,
+  .btn-wa:hover,
+  .btn-call:hover,
+  .call-now:hover { transform: none; }
 }

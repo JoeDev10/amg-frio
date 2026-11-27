@@ -44,6 +44,7 @@ Abrí `js/config.js`.
 | `tagline` | Bajada del logo: Refrigeración y Climatización. |
 | `whatsappNumber` | Número para los links `wa.me`, solo dígitos. Hoy: `5491157303266`. |
 | `whatsappDisplay` | Cómo se muestra el teléfono. Hoy: `+54 9 11 5730-3266`. |
+| `metaPixelId` | Píxel de Meta. **Vacío = no se carga nada y no se rastrea a nadie.** Con el ID puesto, la página avisa a Meta la visita (`PageView`), cada clic en WhatsApp o llamar (`Contact`) y cada envío del formulario (`Lead`). Antes de activarlo, leé la nota de abajo. |
 | `addressLine` | Franja y footer. Hoy: `Juan María Gutiérrez · Berazategui`. |
 | `zonas` | Texto de cobertura en el inicio, la FAQ y el footer. |
 | `localidades` | Chips de la sección «Dónde trabajamos». **Falta que Martín confirme la lista.** |
@@ -96,6 +97,15 @@ Créditos de las fotos de stock, para reemplazar:
 - Heladera exhibidora: Erik Mclean, Pexels
 
 Los trabajos de la galería no se inventan: se cargan en `trabajos` cuando haya fotos.
+
+## Antes de activar el píxel de Meta
+
+El código ya está puesto y queda dormido mientras `metaPixelId` esté vacío: no se pide ningún archivo a Facebook y no se rastrea a nadie. Para encenderlo hace falta el ID del Administrador de Eventos de Meta.
+
+Dos cosas a tener en cuenta antes:
+
+1. **Solo sirve si se van a hacer campañas.** El píxel existe para medir los avisos de Facebook e Instagram y armar públicos. Sin campañas no aporta nada y suma un pedido a un servidor de Meta en cada visita.
+2. **Hay que avisarle al visitante.** En Argentina rige la Ley 25.326 de Protección de Datos Personales. Lo habitual es sumar un aviso de cookies y una página de privacidad. Hoy el sitio no tiene ninguna de las dos porque no hace falta: no rastrea nada. En cuanto se active el píxel, sí hacen falta.
 
 ## Decisiones tomadas a propósito
 

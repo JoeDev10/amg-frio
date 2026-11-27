@@ -13,6 +13,13 @@ window.SITE_CONFIG = {
   technicianName: "Martín",
   whatsappNumber: "5491157303266",
   whatsappDisplay: "+54 9 11 5730-3266",
+
+  /* Píxel de Meta (Facebook e Instagram).
+     Vacío = no se carga nada y no se rastrea a nadie.
+     Para activarlo, pegá acá el ID numérico que da el Administrador de Eventos
+     de Meta (son 15 o 16 dígitos). Con el ID puesto, la página avisa a Meta
+     cuando alguien abre el sitio y cuando toca un botón de WhatsApp o llamar. */
+  metaPixelId: "",
   addressLine: "Juan María Gutiérrez · Berazategui",
   zonas: "Base en Berazategui. Atendemos en Zona Sur y Capital Federal, a domicilio y en comercios.",
 
@@ -44,23 +51,23 @@ window.SITE_CONFIG = {
   confianza: [
     {
       icono: "truck",
-      titulo: "Movilidad y herramientas propias",
-      detalle: "Vamos con el equipamiento para diagnosticar en el lugar."
+      titulo: "Herramientas propias",
+      detalle: "Diagnosticamos en el lugar."
     },
     {
       icono: "pin",
       titulo: "Base en Berazategui",
-      detalle: "Salimos a Zona Sur y Capital Federal."
+      detalle: "Zona Sur y Capital Federal."
     },
     {
       icono: "store",
-      titulo: "Hogares, comercios y empresas",
-      detalle: "Desde un split hasta una cámara frigorífica."
+      titulo: "Comercios y hogares",
+      detalle: "De un split a una cámara."
     },
     {
       icono: "chat",
-      titulo: "Consulta sin compromiso",
-      detalle: "Escribinos y te decimos cómo seguimos, sin obligación."
+      titulo: "Sin compromiso",
+      detalle: "Consultanos y te orientamos."
     }
   ],
 
@@ -68,7 +75,7 @@ window.SITE_CONFIG = {
      síntoma ya escrito, así el cliente no tiene que redactar nada. */
   diagnostico: {
     titulo: "¿Qué le pasa a tu equipo?",
-    bajada: "Tocá lo que más se parezca a tu caso y se abre WhatsApp con el mensaje ya armado. Si no encaja ninguno, escribinos igual.",
+    bajada: "Tocá tu caso y se abre WhatsApp con el mensaje escrito.",
     items: [
       {
         etiqueta: "La cámara no llega a temperatura",
@@ -110,19 +117,19 @@ window.SITE_CONFIG = {
   pasos: [
     {
       titulo: "Nos contás qué pasa",
-      detalle: "Por WhatsApp o con el formulario: qué equipo es, qué falla notás y en qué localidad estás."
+      detalle: "Qué equipo es, qué falla y dónde estás."
     },
     {
       titulo: "Vemos el equipo",
-      detalle: "Coordinamos la visita para revisarlo en el lugar. Si podés, mandanos fotos del equipo y de la placa antes."
+      detalle: "Coordinamos la visita y lo revisamos en el lugar."
     },
     {
-      titulo: "Te explicamos qué encontramos",
-      detalle: "Te decimos qué tiene el equipo y qué hay que hacer, en castellano, antes de tocar nada."
+      titulo: "Te explicamos qué tiene",
+      detalle: "En castellano, antes de tocar nada."
     },
     {
       titulo: "Armamos la propuesta",
-      detalle: "Con el alcance del trabajo según el equipo y lo que necesites."
+      detalle: "Con el alcance del trabajo según el equipo."
     }
   ],
 
@@ -130,10 +137,10 @@ window.SITE_CONFIG = {
      Es información técnica general del rubro, no promesas del negocio. */
   camaras: {
     titulo: "Cámaras frigoríficas",
-    bajada: "Es el equipo que menos se mira y el que más caro sale cuando falla. Armado, instalación, reparación y mantenimiento.",
+    bajada: "Armado, instalación, reparación y mantenimiento.",
     porQue: {
-      titulo: "Por qué no conviene esperar",
-      texto: "Cuando una cámara deja de sostener la temperatura, el problema no es el equipo: es la mercadería adentro. Una falla que arranca como un ruido o un poco de hielo de más termina en pérdida de producto, cortes de servicio en pleno día de venta y problemas con la habilitación. Casi siempre avisa antes.",
+      titulo: "Casi siempre avisa antes",
+      texto: "Una falla que arranca como un ruido o un poco de hielo de más termina en mercadería perdida y el negocio parado un día de venta.",
       senales: [
         "Tarda más de lo normal en bajar la temperatura",
         "Hielo acumulado en el evaporador o en las paredes",
@@ -145,7 +152,7 @@ window.SITE_CONFIG = {
     },
     tipos: {
       titulo: "Conservación o congelación",
-      texto: "Antes de armar o cambiar una cámara, lo primero es definir a qué temperatura tiene que trabajar. De eso dependen el aislamiento, el equipo y lo que vas a gastar por mes en luz.",
+      texto: "Lo primero es definir a qué temperatura tiene que trabajar. De eso dependen el aislamiento, el equipo y el consumo.",
       items: [
         {
           titulo: "Conservación",
@@ -166,7 +173,8 @@ window.SITE_CONFIG = {
     },
     dimensionar: {
       titulo: "Qué define el equipo que necesitás",
-      texto: "No se calcula por metro cuadrado. Estas son las variables que miramos antes de pasarte una propuesta:",
+      texto: "No se calcula por metro cuadrado.",
+      resumen: "Ver las seis variables que miramos",
       items: [
         "Volumen real del recinto, en m³: el alto cuenta igual que el largo y el ancho",
         "Temperatura que tenés que sostener adentro",
