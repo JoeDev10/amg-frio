@@ -858,7 +858,9 @@ textarea[aria-invalid="true"] { border-color: var(--danger); }
 }
 .logos img { height: 48px; width: auto; }
 
-section, .address-bar { scroll-margin-top: 140px; }
+/* Los anclados tienen que quedar debajo del encabezado pegajoso.
+   .card[id] incluido: a esas tarjetas les apuntan los tres caminos. */
+section, .address-bar, .card[id] { scroll-margin-top: 140px; }
 
 /* ---- Entradas y transiciones ---- */
 /* Curva propia: arranca rápido y frena suave. */
@@ -1135,6 +1137,121 @@ section, .address-bar { scroll-margin-top: 140px; }
   .cards { grid-template-columns: repeat(3, 1fr); }
 }
 
+/* ---- Los tres caminos del inicio ---- */
+/* Tres opciones grandes con foto: lo primero que ve el que entra.
+   Son tres a propósito; con más, el que entra no elige. */
+.caminos { background: var(--mist); }
+
+.caminos__grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.camino {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 10px 28px rgba(11, 31, 77, 0.08);
+}
+
+.camino__media {
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--ice);
+  overflow: hidden;
+}
+.camino__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.camino__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px 18px;
+}
+.camino__texto { display: block; }
+
+.camino__titulo {
+  display: block;
+  font-weight: 800;
+  font-size: 1.08rem;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.camino__nota {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* La flecha redonda, como la señal de «acá se toca» */
+.camino__flecha {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ---- La franja del inicio cuando lleva un número ---- */
+.trust__numero {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.35rem;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.trust__etiqueta {
+  margin: 3px 0 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@media (min-width: 700px) {
+  .caminos__grid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+}
+
+/* Movimiento: la foto se acerca y la flecha se corre, nada más. */
+.camino,
+.camino__media img,
+.camino__flecha {
+  transition:
+    transform 0.28s var(--salida),
+    box-shadow 0.28s var(--salida),
+    border-color 0.28s var(--salida),
+    background-color 0.28s var(--salida);
+}
+@media (hover: hover) {
+  .camino:hover {
+    transform: translateY(-5px);
+    border-color: var(--cyan);
+    box-shadow: 0 24px 52px rgba(11, 31, 77, 0.18);
+  }
+  .camino:hover .camino__media img { transform: scale(1.05); }
+  .camino:hover .camino__flecha { background: var(--blue); transform: translateX(3px); }
+}
+.camino:active { transform: translateY(1px); }
+.camino:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
 /* Quien pidió menos movimiento en su sistema no ve ninguna animación. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -1158,7 +1275,13 @@ section, .address-bar { scroll-margin-top: 140px; }
   .panel,
   .zonas__list li,
   .site-nav a::after,
-  .more summary::after { transition: none; }
+  .more summary::after,
+  .camino,
+  .camino__media img,
+  .camino__flecha { transition: none; }
+  .camino:hover { transform: none; }
+  .camino:hover .camino__media img { transform: none; }
+  .camino:hover .camino__flecha { transform: none; }
   .card:hover,
   .triage__item:hover,
   .plan:hover,
@@ -1318,6 +1441,14 @@ section, .address-bar { scroll-margin-top: 140px; }
     <section class="trust" aria-label="Cómo trabajamos">
       <div class="wrap">
         <ul id="trust-list" class="trust__list"></ul>
+      </div>
+    </section>
+
+    <section class="section caminos" id="caminos">
+      <div class="wrap">
+        <h2 id="caminos-titulo">¿Qué venís a hacer?</h2>
+        <p class="lead" id="caminos-bajada">Tres caminos. Tocá el que va con tu equipo.</p>
+        <div id="caminos-grid" class="caminos__grid"></div>
       </div>
     </section>
 
@@ -1685,9 +1816,58 @@ window.SITE_CONFIG = {
     "Capital Federal"
   ],
 
-  /* Franja de confianza del inicio. Solo datos que ya decía el sitio.
-     NO agregues acá años de experiencia, matrícula, cantidad de clientes
-     ni garantías hasta que Martín los confirme. */
+  /* Los tres caminos del inicio: lo primero que ve el que entra.
+     Tres opciones grandes con foto, una por rubro, y cada una baja derecho
+     a su parte. Son tres a propósito: con más, el que entra no elige.
+     Para cambiar el orden, mové el bloque entero. */
+  caminos: {
+    titulo: "¿Qué venís a hacer?",
+    bajada: "Tres caminos. Tocá el que va con tu equipo.",
+    items: [
+      /* `foto` es el id del servicio de más abajo del que sale la imagen.
+         Se reusa a propósito: si se repitiera la ruta, el archivo suelto
+         quedaría incrustado dos veces y la página pesaría 112 KB de más.
+         Cambiar la foto del servicio cambia también la del camino. */
+      {
+        titulo: "Cámaras frigoríficas",
+        nota: "Armado, reparación y mantenimiento",
+        foto: "camaras",
+        destino: "#camaras"
+      },
+      {
+        titulo: "Heladeras y equipos de comercio",
+        nota: "Exhibidoras, freezers y vitrinas",
+        foto: "comercial",
+        destino: "#svc-comercial"
+      },
+      {
+        titulo: "Aire acondicionado",
+        nota: "Instalación, limpieza y reparación",
+        foto: "aires",
+        destino: "#svc-aires"
+      }
+    ]
+  },
+
+  /* Franja del inicio. El que lleva `numero` se muestra en grande, con el
+     número arriba y abajo qué significa, como en las webs que venden.
+
+     ACÁ NO VA NINGÚN NÚMERO INVENTADO. Los años de experiencia y la
+     cantidad de clientes los tiene que confirmar Martín: si el sitio dice
+     veinte años y en la primera charla aparece que son ocho, se pierde la
+     venta y la confianza. Lo mismo con la matrícula, que es un dato
+     verificable. Mientras tanto van los datos que ya sabemos ciertos.
+
+     Cuando Martín pase los reales, agregá los bloques así, arriba de todo:
+
+       { icono: "clock", numero: "+12 años", titulo: "De experiencia" },
+       { icono: "store", numero: "+400", titulo: "Comercios atendidos" },
+       { icono: "shield", numero: "Matriculado", titulo: "Nº de matrícula" },
+
+     y cuando la ficha de Google tenga reseñas:
+
+       { icono: "star", numero: "5,0", titulo: "En Google" },
+  */
   confianza: [
     {
       icono: "truck",
@@ -1982,7 +2162,10 @@ window.SITE_CONFIG = {
     pin: '<path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7z"/><circle cx="12" cy="9" r="2.6" fill="#fff"/>',
     store: '<path d="M4 4h16l1.4 5.2A3.2 3.2 0 0 1 18.3 13 3.1 3.1 0 0 1 15 10.6 3.1 3.1 0 0 1 11.9 13 3.1 3.1 0 0 1 9 10.6 3.1 3.1 0 0 1 5.7 13 3.2 3.2 0 0 1 2.6 9.2z"/><path d="M4.5 13.6V21h15v-7.4"/>',
     chat: '<path d="M4 4h16v12H8l-4 4z"/>',
-    snow: '<path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10"/>'
+    snow: '<path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10"/>',
+    clock: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5.2l3.4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    shield: '<path d="M12 2.5 20 6v5.5c0 4.6-3.3 8.6-8 10-4.7-1.4-8-5.4-8-10V6z"/>',
+    star: '<path d="m12 2.8 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.6l6.5-.9z"/>'
   };
 
   function esc(value) {
@@ -1993,7 +2176,9 @@ window.SITE_CONFIG = {
 
   function icon(name) {
     var body = ICONS[name] || ICONS.snow;
-    var filled = name === "truck" || name === "pin" || name === "store" || name === "chat";
+    var filled =
+      name === "truck" || name === "pin" || name === "store" ||
+      name === "chat" || name === "shield" || name === "star";
     return (
       '<svg class="ico" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false" ' +
       (filled
@@ -2076,12 +2261,61 @@ window.SITE_CONFIG = {
   var trust = document.getElementById("trust-list");
   if (trust && cfg.confianza && cfg.confianza.length) {
     trust.innerHTML = cfg.confianza.map(function (item) {
+      /* Con `numero` se ve el dato grande arriba y la etiqueta abajo.
+         Sin `numero`, el formato de siempre: titulo y detalle. */
+      if (item.numero) {
+        return (
+          "<li class=\"trust__item--dato\">" +
+            icon(item.icono) +
+            "<div><p class=\"trust__numero\">" + esc(item.numero) + "</p>" +
+            "<p class=\"trust__etiqueta\">" + esc(item.titulo || "") + "</p></div>" +
+          "</li>"
+        );
+      }
       return (
         "<li>" +
           icon(item.icono) +
           "<div><p class=\"trust__title\">" + esc(item.titulo) + "</p>" +
           "<p class=\"trust__detail\">" + esc(item.detalle || "") + "</p></div>" +
         "</li>"
+      );
+    }).join("");
+  }
+
+  /* Los tres caminos del inicio. Cada tarjeta baja a su parte del sitio. */
+  var caminos = document.getElementById("caminos-grid");
+  if (caminos && cfg.caminos && cfg.caminos.items) {
+    setText("caminos-titulo", cfg.caminos.titulo);
+    setText("caminos-bajada", cfg.caminos.bajada);
+    /* La foto sale del servicio que nombra `foto`, salvo que el camino
+       traiga su propia `imagen`. Así el archivo se incrusta una sola vez. */
+    function fotoDe(via) {
+      if (via.imagen) return { src: via.imagen, alt: via.alt || "" };
+      var srv = (cfg.services || []).filter(function (x) { return x.id === via.foto; })[0];
+      return srv ? { src: srv.imagen, alt: srv.alt || "" } : null;
+    }
+
+    caminos.innerHTML = cfg.caminos.items.map(function (via) {
+      var foto = fotoDe(via);
+      return (
+        '<a class="camino" href="' + esc(via.destino) + '">' +
+          '<span class="camino__media">' +
+            (foto && foto.src
+              ? '<img src="' + esc(foto.src) + '" alt="' + esc(foto.alt) + '" ' +
+                'width="800" height="600" loading="lazy" decoding="async">'
+              : "") +
+          "</span>" +
+          '<span class="camino__body">' +
+            '<span class="camino__texto">' +
+              '<span class="camino__titulo">' + esc(via.titulo) + "</span>" +
+              '<span class="camino__nota">' + esc(via.nota || "") + "</span>" +
+            "</span>" +
+            '<span class="camino__flecha" aria-hidden="true">' +
+              '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="currentColor" ' +
+              'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12h13M12 5l7 7-7 7"/></svg>' +
+            "</span>" +
+          "</span>" +
+        "</a>"
       );
     }).join("");
   }
@@ -2164,7 +2398,8 @@ window.SITE_CONFIG = {
   if (grid && cfg.services) {
     grid.innerHTML = cfg.services.map(function (service) {
       return (
-        '<article class="card' + (service.destacado ? " card--top" : "") + '">' +
+        '<article class="card' + (service.destacado ? " card--top" : "") + '"' +
+          (service.id ? ' id="svc-' + esc(service.id) + '"' : "") + ">" +
           '<div class="card__media">' +
             (service.imagen
               ? '<img src="' + esc(service.imagen) + '" alt="' + esc(service.alt) + '" width="960" height="600" loading="lazy" decoding="async">'
@@ -2390,7 +2625,7 @@ window.SITE_CONFIG = {
   /* Entradas al hacer scroll. Los hijos de una grilla entran escalonados:
      cada uno lleva --i y el CSS lo convierte en un retardo. */
   if (!quieto.matches && "IntersectionObserver" in window) {
-    var GRILLAS = "#trust-list, #triage-grid, #service-grid, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
+    var GRILLAS = "#caminos-grid, #trust-list, #triage-grid, #service-grid, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
 
     document.querySelectorAll(GRILLAS).forEach(function (grilla) {
       var hijos = grilla.children;

@@ -11,7 +11,10 @@
     pin: '<path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7z"/><circle cx="12" cy="9" r="2.6" fill="#fff"/>',
     store: '<path d="M4 4h16l1.4 5.2A3.2 3.2 0 0 1 18.3 13 3.1 3.1 0 0 1 15 10.6 3.1 3.1 0 0 1 11.9 13 3.1 3.1 0 0 1 9 10.6 3.1 3.1 0 0 1 5.7 13 3.2 3.2 0 0 1 2.6 9.2z"/><path d="M4.5 13.6V21h15v-7.4"/>',
     chat: '<path d="M4 4h16v12H8l-4 4z"/>',
-    snow: '<path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10"/>'
+    snow: '<path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10"/>',
+    clock: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5.2l3.4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    shield: '<path d="M12 2.5 20 6v5.5c0 4.6-3.3 8.6-8 10-4.7-1.4-8-5.4-8-10V6z"/>',
+    star: '<path d="m12 2.8 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.6l6.5-.9z"/>'
   };
 
   function esc(value) {
@@ -22,7 +25,9 @@
 
   function icon(name) {
     var body = ICONS[name] || ICONS.snow;
-    var filled = name === "truck" || name === "pin" || name === "store" || name === "chat";
+    var filled =
+      name === "truck" || name === "pin" || name === "store" ||
+      name === "chat" || name === "shield" || name === "star";
     return (
       '<svg class="ico" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false" ' +
       (filled
@@ -105,12 +110,61 @@
   var trust = document.getElementById("trust-list");
   if (trust && cfg.confianza && cfg.confianza.length) {
     trust.innerHTML = cfg.confianza.map(function (item) {
+      /* Con `numero` se ve el dato grande arriba y la etiqueta abajo.
+         Sin `numero`, el formato de siempre: titulo y detalle. */
+      if (item.numero) {
+        return (
+          "<li class=\"trust__item--dato\">" +
+            icon(item.icono) +
+            "<div><p class=\"trust__numero\">" + esc(item.numero) + "</p>" +
+            "<p class=\"trust__etiqueta\">" + esc(item.titulo || "") + "</p></div>" +
+          "</li>"
+        );
+      }
       return (
         "<li>" +
           icon(item.icono) +
           "<div><p class=\"trust__title\">" + esc(item.titulo) + "</p>" +
           "<p class=\"trust__detail\">" + esc(item.detalle || "") + "</p></div>" +
         "</li>"
+      );
+    }).join("");
+  }
+
+  /* Los tres caminos del inicio. Cada tarjeta baja a su parte del sitio. */
+  var caminos = document.getElementById("caminos-grid");
+  if (caminos && cfg.caminos && cfg.caminos.items) {
+    setText("caminos-titulo", cfg.caminos.titulo);
+    setText("caminos-bajada", cfg.caminos.bajada);
+    /* La foto sale del servicio que nombra `foto`, salvo que el camino
+       traiga su propia `imagen`. Así el archivo se incrusta una sola vez. */
+    function fotoDe(via) {
+      if (via.imagen) return { src: via.imagen, alt: via.alt || "" };
+      var srv = (cfg.services || []).filter(function (x) { return x.id === via.foto; })[0];
+      return srv ? { src: srv.imagen, alt: srv.alt || "" } : null;
+    }
+
+    caminos.innerHTML = cfg.caminos.items.map(function (via) {
+      var foto = fotoDe(via);
+      return (
+        '<a class="camino" href="' + esc(via.destino) + '">' +
+          '<span class="camino__media">' +
+            (foto && foto.src
+              ? '<img src="' + esc(foto.src) + '" alt="' + esc(foto.alt) + '" ' +
+                'width="800" height="600" loading="lazy" decoding="async">'
+              : "") +
+          "</span>" +
+          '<span class="camino__body">' +
+            '<span class="camino__texto">' +
+              '<span class="camino__titulo">' + esc(via.titulo) + "</span>" +
+              '<span class="camino__nota">' + esc(via.nota || "") + "</span>" +
+            "</span>" +
+            '<span class="camino__flecha" aria-hidden="true">' +
+              '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="currentColor" ' +
+              'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12h13M12 5l7 7-7 7"/></svg>' +
+            "</span>" +
+          "</span>" +
+        "</a>"
       );
     }).join("");
   }
@@ -193,7 +247,8 @@
   if (grid && cfg.services) {
     grid.innerHTML = cfg.services.map(function (service) {
       return (
-        '<article class="card' + (service.destacado ? " card--top" : "") + '">' +
+        '<article class="card' + (service.destacado ? " card--top" : "") + '"' +
+          (service.id ? ' id="svc-' + esc(service.id) + '"' : "") + ">" +
           '<div class="card__media">' +
             (service.imagen
               ? '<img src="' + esc(service.imagen) + '" alt="' + esc(service.alt) + '" width="960" height="600" loading="lazy" decoding="async">'
@@ -419,7 +474,7 @@
   /* Entradas al hacer scroll. Los hijos de una grilla entran escalonados:
      cada uno lleva --i y el CSS lo convierte en un retardo. */
   if (!quieto.matches && "IntersectionObserver" in window) {
-    var GRILLAS = "#trust-list, #triage-grid, #service-grid, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
+    var GRILLAS = "#caminos-grid, #trust-list, #triage-grid, #service-grid, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
 
     document.querySelectorAll(GRILLAS).forEach(function (grilla) {
       var hijos = grilla.children;

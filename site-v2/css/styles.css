@@ -832,7 +832,9 @@ textarea[aria-invalid="true"] { border-color: var(--danger); }
 }
 .logos img { height: 48px; width: auto; }
 
-section, .address-bar { scroll-margin-top: 140px; }
+/* Los anclados tienen que quedar debajo del encabezado pegajoso.
+   .card[id] incluido: a esas tarjetas les apuntan los tres caminos. */
+section, .address-bar, .card[id] { scroll-margin-top: 140px; }
 
 /* ---- Entradas y transiciones ---- */
 /* Curva propia: arranca rápido y frena suave. */
@@ -1109,6 +1111,121 @@ section, .address-bar { scroll-margin-top: 140px; }
   .cards { grid-template-columns: repeat(3, 1fr); }
 }
 
+/* ---- Los tres caminos del inicio ---- */
+/* Tres opciones grandes con foto: lo primero que ve el que entra.
+   Son tres a propósito; con más, el que entra no elige. */
+.caminos { background: var(--mist); }
+
+.caminos__grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.camino {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 10px 28px rgba(11, 31, 77, 0.08);
+}
+
+.camino__media {
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--ice);
+  overflow: hidden;
+}
+.camino__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.camino__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px 18px;
+}
+.camino__texto { display: block; }
+
+.camino__titulo {
+  display: block;
+  font-weight: 800;
+  font-size: 1.08rem;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.camino__nota {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* La flecha redonda, como la señal de «acá se toca» */
+.camino__flecha {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ---- La franja del inicio cuando lleva un número ---- */
+.trust__numero {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.35rem;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.trust__etiqueta {
+  margin: 3px 0 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@media (min-width: 700px) {
+  .caminos__grid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+}
+
+/* Movimiento: la foto se acerca y la flecha se corre, nada más. */
+.camino,
+.camino__media img,
+.camino__flecha {
+  transition:
+    transform 0.28s var(--salida),
+    box-shadow 0.28s var(--salida),
+    border-color 0.28s var(--salida),
+    background-color 0.28s var(--salida);
+}
+@media (hover: hover) {
+  .camino:hover {
+    transform: translateY(-5px);
+    border-color: var(--cyan);
+    box-shadow: 0 24px 52px rgba(11, 31, 77, 0.18);
+  }
+  .camino:hover .camino__media img { transform: scale(1.05); }
+  .camino:hover .camino__flecha { background: var(--blue); transform: translateX(3px); }
+}
+.camino:active { transform: translateY(1px); }
+.camino:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
 /* Quien pidió menos movimiento en su sistema no ve ninguna animación. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -1132,7 +1249,13 @@ section, .address-bar { scroll-margin-top: 140px; }
   .panel,
   .zonas__list li,
   .site-nav a::after,
-  .more summary::after { transition: none; }
+  .more summary::after,
+  .camino,
+  .camino__media img,
+  .camino__flecha { transition: none; }
+  .camino:hover { transform: none; }
+  .camino:hover .camino__media img { transform: none; }
+  .camino:hover .camino__flecha { transform: none; }
   .card:hover,
   .triage__item:hover,
   .plan:hover,

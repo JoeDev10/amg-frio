@@ -45,9 +45,58 @@ window.SITE_CONFIG = {
     "Capital Federal"
   ],
 
-  /* Franja de confianza del inicio. Solo datos que ya decía el sitio.
-     NO agregues acá años de experiencia, matrícula, cantidad de clientes
-     ni garantías hasta que Martín los confirme. */
+  /* Los tres caminos del inicio: lo primero que ve el que entra.
+     Tres opciones grandes con foto, una por rubro, y cada una baja derecho
+     a su parte. Son tres a propósito: con más, el que entra no elige.
+     Para cambiar el orden, mové el bloque entero. */
+  caminos: {
+    titulo: "¿Qué venís a hacer?",
+    bajada: "Tres caminos. Tocá el que va con tu equipo.",
+    items: [
+      /* `foto` es el id del servicio de más abajo del que sale la imagen.
+         Se reusa a propósito: si se repitiera la ruta, el archivo suelto
+         quedaría incrustado dos veces y la página pesaría 112 KB de más.
+         Cambiar la foto del servicio cambia también la del camino. */
+      {
+        titulo: "Cámaras frigoríficas",
+        nota: "Armado, reparación y mantenimiento",
+        foto: "camaras",
+        destino: "#camaras"
+      },
+      {
+        titulo: "Heladeras y equipos de comercio",
+        nota: "Exhibidoras, freezers y vitrinas",
+        foto: "comercial",
+        destino: "#svc-comercial"
+      },
+      {
+        titulo: "Aire acondicionado",
+        nota: "Instalación, limpieza y reparación",
+        foto: "aires",
+        destino: "#svc-aires"
+      }
+    ]
+  },
+
+  /* Franja del inicio. El que lleva `numero` se muestra en grande, con el
+     número arriba y abajo qué significa, como en las webs que venden.
+
+     ACÁ NO VA NINGÚN NÚMERO INVENTADO. Los años de experiencia y la
+     cantidad de clientes los tiene que confirmar Martín: si el sitio dice
+     veinte años y en la primera charla aparece que son ocho, se pierde la
+     venta y la confianza. Lo mismo con la matrícula, que es un dato
+     verificable. Mientras tanto van los datos que ya sabemos ciertos.
+
+     Cuando Martín pase los reales, agregá los bloques así, arriba de todo:
+
+       { icono: "clock", numero: "+12 años", titulo: "De experiencia" },
+       { icono: "store", numero: "+400", titulo: "Comercios atendidos" },
+       { icono: "shield", numero: "Matriculado", titulo: "Nº de matrícula" },
+
+     y cuando la ficha de Google tenga reseñas:
+
+       { icono: "star", numero: "5,0", titulo: "En Google" },
+  */
   confianza: [
     {
       icono: "truck",
