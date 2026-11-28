@@ -302,6 +302,11 @@ window.SITE_CONFIG = {
     general: "Hola, quiero hacer una consulta.",
     mantenimiento: "Hola, necesito consultar por mantenimiento preventivo para mi comercio."
   },
+  /* `enGrilla: false` saca el servicio de la grilla de «Servicios», pero lo
+     deja en la lista. Es a propósito: esta lista también arma el desplegable
+     del formulario de contacto y da la foto de los tres caminos del inicio.
+     Cámaras y mantenimiento están en false porque cada uno tiene su propia
+     sección completa más abajo: en la grilla eran la misma cosa dos veces. */
   services: [
     {
       id: "camaras",
@@ -311,6 +316,7 @@ window.SITE_CONFIG = {
       alt: "Interior de una cámara de frío con estanterías y paredes claras",
       mensaje: "Hola, necesito consultar por una cámara frigorífica.",
       destacado: true,
+      enGrilla: false,
       acciones: [
         {
           etiqueta: "Armado o instalación",
@@ -329,7 +335,8 @@ window.SITE_CONFIG = {
       imagen: "img/servicios/mantenimiento.webp",
       alt: "Unidad exterior de un equipo de refrigeración en servicio",
       mensaje: "Hola, necesito consultar por mantenimiento preventivo para mi comercio.",
-      destacado: true
+      destacado: true,
+      enGrilla: false
     },
     {
       id: "aires",

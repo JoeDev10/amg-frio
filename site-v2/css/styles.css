@@ -256,7 +256,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* El display del menú pisa el atributo hidden del UA; hay que respetarlo. */
 .site-nav [hidden] { display: none !important; }
 
+/* La foto ocupa todo el inicio y el texto va encima, como en las webs de
+   concesionaria. El degradado de abajo queda de respaldo por si la imagen
+   todavía no cargó. */
 .hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   background:
     radial-gradient(900px 420px at 8% -10%, rgba(30, 200, 240, 0.28), transparent 60%),
     linear-gradient(165deg, #071536 0%, #0b1f4d 58%, #13406f 100%);
@@ -287,11 +293,20 @@ button, input, select, textarea { font: inherit; color: inherit; }
   width: 100%;
 }
 .btn-call:hover { background: #fff; color: #0b1f4d; border-color: #fff; }
-.hero__inner { display: flex; flex-direction: column; }
+/* z-index 1: el texto por encima de la foto y de la cortina. */
+.hero__inner { position: relative; z-index: 1; display: flex; flex-direction: column; }
 .hero__copy {
-  padding: 32px 20px 28px;
+  /* position + z-index son necesarios: .hero__media es hermana y está
+     posicionada, así que sin esto se pinta encima y tapa el texto. */
+  position: relative;
+  z-index: 1;
+  padding: 40px 20px 44px;
   width: min(1120px, 100%);
   margin-inline: auto;
+  min-height: 72svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .hero h1 {
   margin-bottom: 14px;
@@ -314,8 +329,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
   color: #cfe2f5;
 }
 .hero__media {
-  position: relative;
-  height: 230px;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   background: #12315f;
   /* La animación de entrada agranda la imagen un 7 %: se recorta acá
      para que no empuje el ancho de la página. */
@@ -327,11 +343,20 @@ button, input, select, textarea { font: inherit; color: inherit; }
   object-fit: cover;
   object-position: 62% center;
 }
+/* La cortina. Está calculada, no elegida a ojo: en su punto más claro deja
+   el fondo al 70 % de azul, y ahí el texto blanco da 7:1 de contraste aun
+   si la foto fuera blanca. Así cualquier foto que ponga Martín más adelante
+   sigue siendo legible sin tocar el CSS. */
 .hero__media::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(7, 21, 54, 0.35), transparent 32%);
+  background:
+    linear-gradient(103deg,
+      rgba(7, 21, 54, 0.86) 0%,
+      rgba(7, 21, 54, 0.60) 58%,
+      rgba(7, 21, 54, 0.50) 100%),
+    rgba(7, 21, 54, 0.4);
   pointer-events: none;
 }
 
@@ -1085,21 +1110,14 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
 }
 
 @media (min-width: 960px) {
-  .hero__inner {
-    flex-direction: row;
-    align-items: stretch;
-    min-height: 560px;
-  }
+  .hero__inner { min-height: 600px; }
+  /* El texto se queda sobre la mitad izquierda, que es la parte más
+     oscura de la cortina; la foto se ve a la derecha. */
   .hero__copy {
-    width: 56%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 56px 40px 56px max(24px, calc((100% - 1120px) / 2 + 16px));
+    min-height: 600px;
+    padding: 64px 40px 64px max(24px, calc((100% - 1120px) / 2 + 16px));
   }
-  .hero__media { width: 44%; height: auto; }
-  .hero__media img { position: absolute; inset: 0; }
+  .hero__copy > * { max-width: 36rem; }
 }
 
 @media (min-width: 900px) {

@@ -245,7 +245,12 @@
   var grid = document.getElementById("service-grid");
   var select = document.getElementById("tipo-equipo");
   if (grid && cfg.services) {
-    grid.innerHTML = cfg.services.map(function (service) {
+    /* Solo la grilla filtra. El desplegable de abajo y la foto de los
+       caminos siguen usando la lista completa. */
+    var enGrilla = cfg.services.filter(function (service) {
+      return service.enGrilla !== false;
+    });
+    grid.innerHTML = enGrilla.map(function (service) {
       return (
         '<article class="card' + (service.destacado ? " card--top" : "") + '"' +
           (service.id ? ' id="svc-' + esc(service.id) + '"' : "") + ">" +
