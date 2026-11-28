@@ -242,45 +242,52 @@
     }
   }
 
-  var grid = document.getElementById("service-grid");
+  /* Ya no hay grilla de «Servicios»: cada rubro tiene su propia sección.
+     El desplegable del formulario se llena aparte, con la lista completa,
+     porque antes colgaba del mismo bloque que la grilla y se habría
+     quedado vacío al sacarla. */
   var select = document.getElementById("tipo-equipo");
-  if (grid && cfg.services) {
-    /* Solo la grilla filtra. El desplegable de abajo y la foto de los
-       caminos siguen usando la lista completa. */
-    var enGrilla = cfg.services.filter(function (service) {
-      return service.enGrilla !== false;
+  if (select && cfg.services) {
+    cfg.services.forEach(function (service) {
+      var option = document.createElement("option");
+      option.value = service.titulo;
+      option.textContent = service.titulo;
+      select.appendChild(option);
     });
-    grid.innerHTML = enGrilla.map(function (service) {
-      return (
-        '<article class="card' + (service.destacado ? " card--top" : "") + '"' +
-          (service.id ? ' id="svc-' + esc(service.id) + '"' : "") + ">" +
-          '<div class="card__media">' +
-            (service.imagen
-              ? '<img src="' + esc(service.imagen) + '" alt="' + esc(service.alt) + '" width="960" height="600" loading="lazy" decoding="async">'
-              : '<div class="ph ph--service" role="img" aria-label="' + esc(service.titulo) + '"><span class="ph__emoji" aria-hidden="true">' + (service.placeholderEmoji || "📷") + "</span></div>") +
-          "</div>" +
-          '<div class="card__body">' +
-            "<h3>" + esc(service.titulo) + "</h3>" +
-            "<p>" + esc(service.descripcion) + "</p>" +
-            '<div class="card__actions">' +
-              (service.acciones && service.acciones.length
-                ? service.acciones.map(function (action) { return waButton(action.etiqueta, action.mensaje); }).join("")
-                : waButton("Consultar por WhatsApp", service.mensaje)) +
-            "</div>" +
-          "</div>" +
-        "</article>"
-      );
-    }).join("");
-
-    if (select) {
-      cfg.services.forEach(function (service) {
-        var option = document.createElement("option");
-        option.value = service.titulo;
-        option.textContent = service.titulo;
-        select.appendChild(option);
-      });
-    }
   }
+
+  /* Las secciones de rubro: comercio y aire. La foto sale del servicio que
+     nombra `servicio`, para no incrustar el mismo archivo dos veces. */
+  (cfg.rubros || []).forEach(function (rubro) {
+    var caja = document.getElementById(rubro.id + "-cuerpo");
+    if (!caja) return;
+    setText(rubro.id + "-titulo", rubro.titulo);
+    setText(rubro.id + "-bajada", rubro.bajada);
+
+    var srv = (cfg.services || []).filter(function (x) {
+      return x.id === rubro.servicio;
+    })[0];
+
+    caja.innerHTML =
+      (srv && srv.imagen
+        ? '<div class="rubro__media">' +
+            '<img src="' + esc(srv.imagen) + '" alt="' + esc(srv.alt || "") + '" ' +
+            'width="960" height="600" loading="lazy" decoding="async">' +
+          "</div>"
+        : "") +
+      '<div class="rubro__body">' +
+        '<ul class="ticks">' +
+          (rubro.puntos || []).map(function (p) {
+            return "<li>" + esc(p) + "</li>";
+          }).join("") +
+        "</ul>" +
+        '<div class="rubro__accion">' +
+          waButton(rubro.accion || "Consultar por WhatsApp", rubro.mensaje) +
+        "</div>" +
+      "</div>";
+  });
+
+  setText("camaras-tambien", cfg.camaras && cfg.camaras.tambien);
 
   var camarasBox = document.getElementById("camaras-acciones");
   if (camarasBox && cfg.services) {
@@ -479,7 +486,7 @@
   /* Entradas al hacer scroll. Los hijos de una grilla entran escalonados:
      cada uno lleva --i y el CSS lo convierte en un retardo. */
   if (!quieto.matches && "IntersectionObserver" in window) {
-    var GRILLAS = "#caminos-grid, #trust-list, #triage-grid, #service-grid, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
+    var GRILLAS = "#caminos-grid, #trust-list, #triage-grid, .rubro .ticks, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
 
     document.querySelectorAll(GRILLAS).forEach(function (grilla) {
       var hijos = grilla.children;

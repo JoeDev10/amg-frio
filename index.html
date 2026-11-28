@@ -1270,6 +1270,56 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
 .camino:active { transform: translateY(1px); }
 .camino:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 
+/* ---- Secciones de rubro: comercio y aire ---- */
+/* Cada camino del inicio llega a una de estas. Antes eran tarjetas sueltas
+   dentro de una grilla de seis, que era un segundo menú. */
+.rubro--alt { background: var(--mist); }
+
+.rubro__grid {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.rubro__media {
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--ice);
+  aspect-ratio: 16 / 10;
+  box-shadow: 0 14px 34px rgba(11, 31, 77, 0.12);
+}
+.rubro__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rubro__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+}
+.rubro__body .ticks { gap: 10px; }
+.rubro__accion .btn-wa { width: 100%; }
+
+/* El renglón de lo que entra en cámaras sin ser un rubro aparte */
+.section__also {
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (min-width: 760px) {
+  .rubro__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: center;
+  }
+  .rubro__accion .btn-wa { width: auto; }
+}
+
 /* Quien pidió menos movimiento en su sistema no ve ninguna animación. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -1418,9 +1468,11 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
         <span class="burger" aria-hidden="true"></span>
       </button>
       <nav id="site-nav" class="site-nav" aria-label="Secciones">
-        <a href="#servicios">Servicios</a>
-        <span class="nav-dot" aria-hidden="true">·</span>
         <a href="#camaras">Cámaras</a>
+        <span class="nav-dot" aria-hidden="true">·</span>
+        <a href="#comercio">Comercio</a>
+        <span class="nav-dot" aria-hidden="true">·</span>
+        <a href="#aire">Aire</a>
         <span class="nav-dot" aria-hidden="true">·</span>
         <a href="#mantenimiento">Mantenimiento</a>
         <span class="nav-dot" data-nav-trabajos aria-hidden="true" hidden>·</span>
@@ -1478,14 +1530,6 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
       </div>
     </section>
 
-    <section class="section" id="servicios">
-      <div class="wrap">
-        <h2>Servicios</h2>
-        <p class="lead">Cámaras y mantenimiento, que son nuestro fuerte, tienen su propia parte más abajo.</p>
-        <div id="service-grid" class="cards"></div>
-      </div>
-    </section>
-
     <section class="section camaras" id="camaras">
       <div class="wrap">
         <h2 id="camaras-titulo">Cámaras frigoríficas</h2>
@@ -1519,6 +1563,23 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
         </article>
 
         <div id="camaras-acciones" class="choices"></div>
+        <p class="section__also" id="camaras-tambien"></p>
+      </div>
+    </section>
+
+    <section class="section rubro" id="comercio">
+      <div class="wrap">
+        <h2 id="comercio-titulo">Heladeras y equipos de comercio</h2>
+        <p class="lead" id="comercio-bajada">Heladeras exhibidoras, freezers, vitrinas y equipos de comercios.</p>
+        <div id="comercio-cuerpo" class="rubro__grid"></div>
+      </div>
+    </section>
+
+    <section class="section rubro rubro--alt" id="aire">
+      <div class="wrap">
+        <h2 id="aire-titulo">Aire acondicionado</h2>
+        <p class="lead" id="aire-bajada">Instalación, mantenimiento, limpieza, diagnóstico de fallas y reparación.</p>
+        <div id="aire-cuerpo" class="rubro__grid"></div>
       </div>
     </section>
 
@@ -1856,16 +1917,54 @@ window.SITE_CONFIG = {
         titulo: "Heladeras y equipos de comercio",
         nota: "Exhibidoras, freezers y vitrinas",
         foto: "comercial",
-        destino: "#svc-comercial"
+        destino: "#comercio"
       },
       {
         titulo: "Aire acondicionado",
         nota: "Instalación, limpieza y reparación",
         foto: "aires",
-        destino: "#svc-aires"
+        destino: "#aire"
       }
     ]
   },
+
+  /* Las dos secciones que antes eran tarjetas sueltas dentro de la grilla
+     de «Servicios». Ahora cada camino del inicio llega a una sección propia:
+     tres opciones arriba, tres lugares abajo, uno por uno.
+
+     `servicio` es el id del servicio del que sale la foto, para no incrustar
+     el mismo archivo dos veces. Los puntos no agregan nada nuevo: son la
+     descripción que ya tenía el servicio, partida en renglones. */
+  rubros: [
+    {
+      id: "comercio",
+      servicio: "comercial",
+      titulo: "Heladeras y equipos de comercio",
+      bajada: "Heladeras exhibidoras, freezers, vitrinas y equipos de comercios.",
+      puntos: [
+        "Heladeras exhibidoras",
+        "Freezers y congeladores",
+        "Vitrinas refrigeradas",
+        "Equipos de comercio en general"
+      ],
+      accion: "Consultar por un equipo de comercio",
+      mensaje: "Hola, necesito consultar por un equipo de comercio: heladera, freezer o vitrina."
+    },
+    {
+      id: "aire",
+      servicio: "aires",
+      titulo: "Aire acondicionado",
+      bajada: "Instalación, mantenimiento, limpieza, diagnóstico de fallas y reparación.",
+      puntos: [
+        "Instalación de split",
+        "Mantenimiento y limpieza",
+        "Diagnóstico de fallas",
+        "Reparación"
+      ],
+      accion: "Consultar por un aire acondicionado",
+      mensaje: "Hola, necesito consultar por un aire acondicionado."
+    }
+  ],
 
   /* Franja del inicio. El que lleva `numero` se muestra en grande, con el
      número arriba y abajo qué significa, como en las webs que venden.
@@ -1976,6 +2075,9 @@ window.SITE_CONFIG = {
   camaras: {
     titulo: "Cámaras frigoríficas",
     bajada: "Armado, instalación, reparación y mantenimiento.",
+    /* Frío industrial y compresores no son un rubro aparte: son trabajos
+       que entran acá. Antes tenían una tarjeta propia en la grilla. */
+    tambien: "También hacemos frío industrial y reparación de compresores y motocompresores.",
     porQue: {
       titulo: "Casi siempre avisa antes",
       texto: "Una falla que arranca como un ruido o un poco de hielo de más termina en mercadería perdida y el negocio parado un día de venta.",
@@ -2418,45 +2520,52 @@ window.SITE_CONFIG = {
     }
   }
 
-  var grid = document.getElementById("service-grid");
+  /* Ya no hay grilla de «Servicios»: cada rubro tiene su propia sección.
+     El desplegable del formulario se llena aparte, con la lista completa,
+     porque antes colgaba del mismo bloque que la grilla y se habría
+     quedado vacío al sacarla. */
   var select = document.getElementById("tipo-equipo");
-  if (grid && cfg.services) {
-    /* Solo la grilla filtra. El desplegable de abajo y la foto de los
-       caminos siguen usando la lista completa. */
-    var enGrilla = cfg.services.filter(function (service) {
-      return service.enGrilla !== false;
+  if (select && cfg.services) {
+    cfg.services.forEach(function (service) {
+      var option = document.createElement("option");
+      option.value = service.titulo;
+      option.textContent = service.titulo;
+      select.appendChild(option);
     });
-    grid.innerHTML = enGrilla.map(function (service) {
-      return (
-        '<article class="card' + (service.destacado ? " card--top" : "") + '"' +
-          (service.id ? ' id="svc-' + esc(service.id) + '"' : "") + ">" +
-          '<div class="card__media">' +
-            (service.imagen
-              ? '<img src="' + esc(service.imagen) + '" alt="' + esc(service.alt) + '" width="960" height="600" loading="lazy" decoding="async">'
-              : '<div class="ph ph--service" role="img" aria-label="' + esc(service.titulo) + '"><span class="ph__emoji" aria-hidden="true">' + (service.placeholderEmoji || "📷") + "</span></div>") +
-          "</div>" +
-          '<div class="card__body">' +
-            "<h3>" + esc(service.titulo) + "</h3>" +
-            "<p>" + esc(service.descripcion) + "</p>" +
-            '<div class="card__actions">' +
-              (service.acciones && service.acciones.length
-                ? service.acciones.map(function (action) { return waButton(action.etiqueta, action.mensaje); }).join("")
-                : waButton("Consultar por WhatsApp", service.mensaje)) +
-            "</div>" +
-          "</div>" +
-        "</article>"
-      );
-    }).join("");
-
-    if (select) {
-      cfg.services.forEach(function (service) {
-        var option = document.createElement("option");
-        option.value = service.titulo;
-        option.textContent = service.titulo;
-        select.appendChild(option);
-      });
-    }
   }
+
+  /* Las secciones de rubro: comercio y aire. La foto sale del servicio que
+     nombra `servicio`, para no incrustar el mismo archivo dos veces. */
+  (cfg.rubros || []).forEach(function (rubro) {
+    var caja = document.getElementById(rubro.id + "-cuerpo");
+    if (!caja) return;
+    setText(rubro.id + "-titulo", rubro.titulo);
+    setText(rubro.id + "-bajada", rubro.bajada);
+
+    var srv = (cfg.services || []).filter(function (x) {
+      return x.id === rubro.servicio;
+    })[0];
+
+    caja.innerHTML =
+      (srv && srv.imagen
+        ? '<div class="rubro__media">' +
+            '<img src="' + esc(srv.imagen) + '" alt="' + esc(srv.alt || "") + '" ' +
+            'width="960" height="600" loading="lazy" decoding="async">' +
+          "</div>"
+        : "") +
+      '<div class="rubro__body">' +
+        '<ul class="ticks">' +
+          (rubro.puntos || []).map(function (p) {
+            return "<li>" + esc(p) + "</li>";
+          }).join("") +
+        "</ul>" +
+        '<div class="rubro__accion">' +
+          waButton(rubro.accion || "Consultar por WhatsApp", rubro.mensaje) +
+        "</div>" +
+      "</div>";
+  });
+
+  setText("camaras-tambien", cfg.camaras && cfg.camaras.tambien);
 
   var camarasBox = document.getElementById("camaras-acciones");
   if (camarasBox && cfg.services) {
@@ -2655,7 +2764,7 @@ window.SITE_CONFIG = {
   /* Entradas al hacer scroll. Los hijos de una grilla entran escalonados:
      cada uno lleva --i y el CSS lo convierte en un retardo. */
   if (!quieto.matches && "IntersectionObserver" in window) {
-    var GRILLAS = "#caminos-grid, #trust-list, #triage-grid, #service-grid, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
+    var GRILLAS = "#caminos-grid, #trust-list, #triage-grid, .rubro .ticks, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
 
     document.querySelectorAll(GRILLAS).forEach(function (grilla) {
       var hijos = grilla.children;

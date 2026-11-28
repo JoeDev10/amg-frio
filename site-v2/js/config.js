@@ -67,16 +67,54 @@ window.SITE_CONFIG = {
         titulo: "Heladeras y equipos de comercio",
         nota: "Exhibidoras, freezers y vitrinas",
         foto: "comercial",
-        destino: "#svc-comercial"
+        destino: "#comercio"
       },
       {
         titulo: "Aire acondicionado",
         nota: "Instalación, limpieza y reparación",
         foto: "aires",
-        destino: "#svc-aires"
+        destino: "#aire"
       }
     ]
   },
+
+  /* Las dos secciones que antes eran tarjetas sueltas dentro de la grilla
+     de «Servicios». Ahora cada camino del inicio llega a una sección propia:
+     tres opciones arriba, tres lugares abajo, uno por uno.
+
+     `servicio` es el id del servicio del que sale la foto, para no incrustar
+     el mismo archivo dos veces. Los puntos no agregan nada nuevo: son la
+     descripción que ya tenía el servicio, partida en renglones. */
+  rubros: [
+    {
+      id: "comercio",
+      servicio: "comercial",
+      titulo: "Heladeras y equipos de comercio",
+      bajada: "Heladeras exhibidoras, freezers, vitrinas y equipos de comercios.",
+      puntos: [
+        "Heladeras exhibidoras",
+        "Freezers y congeladores",
+        "Vitrinas refrigeradas",
+        "Equipos de comercio en general"
+      ],
+      accion: "Consultar por un equipo de comercio",
+      mensaje: "Hola, necesito consultar por un equipo de comercio: heladera, freezer o vitrina."
+    },
+    {
+      id: "aire",
+      servicio: "aires",
+      titulo: "Aire acondicionado",
+      bajada: "Instalación, mantenimiento, limpieza, diagnóstico de fallas y reparación.",
+      puntos: [
+        "Instalación de split",
+        "Mantenimiento y limpieza",
+        "Diagnóstico de fallas",
+        "Reparación"
+      ],
+      accion: "Consultar por un aire acondicionado",
+      mensaje: "Hola, necesito consultar por un aire acondicionado."
+    }
+  ],
 
   /* Franja del inicio. El que lleva `numero` se muestra en grande, con el
      número arriba y abajo qué significa, como en las webs que venden.
@@ -187,6 +225,9 @@ window.SITE_CONFIG = {
   camaras: {
     titulo: "Cámaras frigoríficas",
     bajada: "Armado, instalación, reparación y mantenimiento.",
+    /* Frío industrial y compresores no son un rubro aparte: son trabajos
+       que entran acá. Antes tenían una tarjeta propia en la grilla. */
+    tambien: "También hacemos frío industrial y reparación de compresores y motocompresores.",
     porQue: {
       titulo: "Casi siempre avisa antes",
       texto: "Una falla que arranca como un ruido o un poco de hielo de más termina en mercadería perdida y el negocio parado un día de venta.",
