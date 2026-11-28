@@ -51,7 +51,7 @@ window.SITE_CONFIG = {
      Para cambiar el orden, mové el bloque entero. */
   caminos: {
     titulo: "¿Qué venís a hacer?",
-    bajada: "Tres caminos. Tocá el que va con tu equipo.",
+    bajada: "Tocá el que va con tu equipo.",
     items: [
       /* `foto` es el id del servicio de más abajo del que sale la imagen.
          Se reusa a propósito: si se repitiera la ruta, el archivo suelto
@@ -78,14 +78,31 @@ window.SITE_CONFIG = {
     ]
   },
 
-  /* Las dos secciones que antes eran tarjetas sueltas dentro de la grilla
-     de «Servicios». Ahora cada camino del inicio llega a una sección propia:
-     tres opciones arriba, tres lugares abajo, uno por uno.
+  /* Las secciones que tienen foto, lista y un botón: las tres a las que
+     llevan los caminos del inicio, más mantenimiento. Todas con el mismo
+     orden: primero qué hacemos, después el botón.
 
+     `id` es el de la sección en index.html (se llena #<id>-cuerpo).
      `servicio` es el id del servicio del que sale la foto, para no incrustar
-     el mismo archivo dos veces. Los puntos no agregan nada nuevo: son la
-     descripción que ya tenía el servicio, partida en renglones. */
+     el mismo archivo dos veces. Los puntos no agregan nada nuevo: son lo que
+     el sitio ya decía de cada servicio, partido en renglones.
+     Sin `mensaje`, el botón usa el de `messages` con el mismo id.
+     El botón es discreto a propósito: la página no tiene que ser «llame ya». */
   rubros: [
+    {
+      id: "camaras",
+      servicio: "camaras",
+      titulo: "Cámaras frigoríficas",
+      bajada: "Armado, instalación, reparación y mantenimiento.",
+      puntos: [
+        "Armado e instalación de cámaras nuevas",
+        "De conservación, congelación o mixtas",
+        "Reparación y diagnóstico de fallas",
+        "Mantenimiento preventivo"
+      ],
+      accion: "Consultar por una cámara",
+      mensaje: "Hola, quiero consultar por una cámara frigorífica."
+    },
     {
       id: "comercio",
       servicio: "comercial",
@@ -97,7 +114,7 @@ window.SITE_CONFIG = {
         "Vitrinas refrigeradas",
         "Equipos de comercio en general"
       ],
-      accion: "Consultar por un equipo de comercio",
+      accion: "Consultar por una heladera",
       mensaje: "Hola, necesito consultar por un equipo de comercio: heladera, freezer o vitrina."
     },
     {
@@ -111,8 +128,23 @@ window.SITE_CONFIG = {
         "Diagnóstico de fallas",
         "Reparación"
       ],
-      accion: "Consultar por un aire acondicionado",
+      accion: "Consultar por un aire",
       mensaje: "Hola, necesito consultar por un aire acondicionado."
+    },
+    /* Antes había tres planes con la misma lista repetida. Se sacaron a
+       pedido: queda una sola lista de qué incluye cada visita y para quién. */
+    {
+      id: "mantenimiento",
+      servicio: "mantenimiento",
+      etiqueta: "Cada visita incluye",
+      puntos: [
+        "Limpieza",
+        "Control de temperatura y funcionamiento",
+        "Revisión preventiva",
+        "Informe de lo que se vio"
+      ],
+      para: ["Heladerías", "Carnicerías", "Supermercados", "Restaurantes", "Otros comercios"],
+      accion: "Consultar por mantenimiento"
     }
   ],
 
@@ -159,40 +191,50 @@ window.SITE_CONFIG = {
   ],
 
   /* Atajos de diagnóstico del inicio. Cada uno abre WhatsApp con el
-     síntoma ya escrito, así el cliente no tiene que redactar nada. */
+     síntoma ya escrito, así el cliente no tiene que redactar nada.
+     `icono` es el dibujo de la tarjeta: termometro, hielo, heladera, ruido,
+     split, nueva, agenda u otro (están en main.js, en ICONOS_LINEA). */
   diagnostico: {
     titulo: "¿Qué le pasa a tu equipo?",
     bajada: "Tocá tu caso y se abre WhatsApp con el mensaje escrito.",
     items: [
       {
+        icono: "termometro",
         etiqueta: "La cámara no llega a temperatura",
         mensaje: "Hola, tengo una cámara frigorífica que no llega a la temperatura que necesito. ¿Pueden verla?"
       },
       {
+        icono: "hielo",
         etiqueta: "Se formó hielo en el evaporador",
         mensaje: "Hola, se me formó hielo en el evaporador del equipo de frío. ¿Pueden verlo?"
       },
       {
+        icono: "heladera",
         etiqueta: "La heladera exhibidora no enfría",
         mensaje: "Hola, tengo una heladera exhibidora que no enfría. ¿Pueden verla?"
       },
       {
+        icono: "ruido",
         etiqueta: "El equipo hace ruido raro o vibra",
         mensaje: "Hola, mi equipo de frío hace un ruido raro o vibra más que de costumbre. ¿Pueden revisarlo?"
       },
       {
+        icono: "split",
         etiqueta: "El split no enfría o gotea",
         mensaje: "Hola, mi aire acondicionado split no enfría bien o está goteando. ¿Pueden verlo?"
       },
       {
+        icono: "nueva",
         etiqueta: "Quiero armar una cámara nueva",
         mensaje: "Hola, quiero armar una cámara frigorífica nueva. ¿Pueden pasarme un presupuesto?"
       },
       {
+        icono: "agenda",
         etiqueta: "Necesito mantenimiento programado",
         mensaje: "Hola, necesito mantenimiento preventivo programado para los equipos de mi comercio."
       },
       {
+        icono: "otro",
         etiqueta: "Mi caso es otro",
         mensaje: "Hola, quiero hacer una consulta por un equipo de refrigeración."
       }
@@ -220,14 +262,18 @@ window.SITE_CONFIG = {
     }
   ],
 
-  /* Contenido de la sección de cámaras frigoríficas.
-     Es información técnica general del rubro, no promesas del negocio. */
+  /* Lo técnico de la sección de cámaras frigoríficas. El título, la lista
+     y el botón están en `rubros`, como Comercio y Aire. Esto va plegado en
+     «Ver más»: es información técnica general del rubro, no promesas del
+     negocio. */
   camaras: {
-    titulo: "Cámaras frigoríficas",
-    bajada: "Armado, instalación, reparación y mantenimiento.",
     /* Frío industrial y compresores no son un rubro aparte: son trabajos
        que entran acá. Antes tenían una tarjeta propia en la grilla. */
     tambien: "También hacemos frío industrial y reparación de compresores y motocompresores.",
+    mas: {
+      titulo: "Lo que conviene saber de una cámara",
+      detalle: "Señales de falla, conservación o congelación y qué define el equipo."
+    },
     porQue: {
       titulo: "Casi siempre avisa antes",
       texto: "Una falla que arranca como un ruido o un poco de hielo de más termina en mercadería perdida y el negocio parado un día de venta.",
@@ -263,8 +309,7 @@ window.SITE_CONFIG = {
     },
     dimensionar: {
       titulo: "Qué define el equipo que necesitás",
-      texto: "No se calcula por metro cuadrado.",
-      resumen: "Ver las seis variables que miramos",
+      texto: "No se calcula por metro cuadrado. Estas son las seis cosas que miramos:",
       items: [
         "Volumen real del recinto, en m³: el alto cuenta igual que el largo y el ancho",
         "Temperatura que tenés que sostener adentro",
@@ -274,8 +319,7 @@ window.SITE_CONFIG = {
         "Aislamiento de paredes, piso y techo"
       ],
       cierre: "Una cámara chica para lo que guardás trabaja al máximo todo el día y se desgasta. Una demasiado grande arranca y para todo el tiempo y también consume de más."
-    },
-    mensaje: "Hola, quiero consultar por una cámara frigorífica."
+    }
   },
 
   showReviews: false,
@@ -317,37 +361,15 @@ window.SITE_CONFIG = {
       despuesRotulo: "Después"
     }
   ],
-  propuestas: [
-    {
-      titulo: "Visita periódica básica",
-      detalle: "Una recorrida programada para ver cómo está el equipo.",
-      incluye: ["Limpieza", "Control de temperatura y funcionamiento", "Revisión preventiva", "Informe"],
-      mensaje: "Hola, quiero que armen una propuesta de visita periódica básica para mi comercio."
-    },
-    {
-      titulo: "Mantenimiento frecuente",
-      detalle: "Para cuando el frío del negocio no puede cortarse. La frecuencia la definimos con vos.",
-      incluye: ["Limpieza", "Control de temperatura y funcionamiento", "Revisión preventiva", "Informe"],
-      mensaje: "Hola, quiero que armen una propuesta de mantenimiento frecuente para mi comercio.",
-      destacado: true
-    },
-    {
-      titulo: "A medida",
-      detalle: "Definimos el alcance según tus instalaciones y lo que necesitás cuidar.",
-      incluye: ["Limpieza", "Control de temperatura y funcionamiento", "Revisión preventiva", "Informe"],
-      mensaje: "Hola, quiero que armen una propuesta de mantenimiento a medida para mi comercio."
-    }
-  ],
   messages: {
     hero: "Hola, quiero consultar por una cámara frigorífica o por mantenimiento preventivo y pedir un presupuesto.",
     general: "Hola, quiero hacer una consulta.",
     mantenimiento: "Hola, necesito consultar por mantenimiento preventivo para mi comercio."
   },
-  /* `enGrilla: false` saca el servicio de la grilla de «Servicios», pero lo
-     deja en la lista. Es a propósito: esta lista también arma el desplegable
-     del formulario de contacto y da la foto de los tres caminos del inicio.
-     Cámaras y mantenimiento están en false porque cada uno tiene su propia
-     sección completa más abajo: en la grilla eran la misma cosa dos veces. */
+  /* Ya no hay grilla de «Servicios». Esta lista arma el desplegable del
+     formulario de contacto y da las fotos de los caminos del inicio y de las
+     secciones de `rubros`. `enGrilla` quedó de cuando había grilla: hoy no
+     cambia nada. */
   services: [
     {
       id: "camaras",
@@ -357,17 +379,7 @@ window.SITE_CONFIG = {
       alt: "Interior de una cámara de frío con estanterías y paredes claras",
       mensaje: "Hola, necesito consultar por una cámara frigorífica.",
       destacado: true,
-      enGrilla: false,
-      acciones: [
-        {
-          etiqueta: "Armado o instalación",
-          mensaje: "Hola, necesito consultar por el armado o instalación de una cámara frigorífica."
-        },
-        {
-          etiqueta: "Mantenimiento de cámara instalada",
-          mensaje: "Hola, necesito mantenimiento para una cámara ya instalada."
-        }
-      ]
+      enGrilla: false
     },
     {
       id: "mantenimiento",

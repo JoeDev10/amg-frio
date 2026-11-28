@@ -17,6 +17,31 @@
     star: '<path d="m12 2.8 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.6l6.5-.9z"/>'
   };
 
+  /* Dibujos de línea de los atajos de diagnóstico. La clave es `icono` en
+     config.js, dentro de `diagnostico.items`. */
+  var ICONOS_LINEA = {
+    termometro: '<path d="M14 14.8V4.5a2 2 0 0 0-4 0v10.3a4 4 0 1 0 4 0z"/><path d="M12 11v6"/>',
+    hielo: '<path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="m9 3.6 3 2.2 3-2.2M9 20.4l3-2.2 3 2.2M3.9 10.3l2.8 1.7-2.8 1.7M20.1 10.3 17.3 12l2.8 1.7"/>',
+    heladera: '<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M5 9.5h14M8.5 6v1M8.5 12.5v3"/>',
+    ruido: '<path d="M4 9.5h3l4.5-4v13L7 14.5H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>',
+    split: '<rect x="2.5" y="4.5" width="19" height="8.5" rx="2"/><path d="M6 10h12M8 16.5v2.5M12 16.5v3.5M16 16.5v2.5"/>',
+    nueva: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M12 8v8M8 12h8"/>',
+    agenda: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 3v4M16 3v4M3.5 10h17M9 15l2 2 4-4"/>',
+    otro: '<path d="M20.5 15a2 2 0 0 1-2 2H8l-4.5 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/><path d="M8.5 10h.01M12 10h.01M15.5 10h.01"/>'
+  };
+
+  var FLECHA =
+    '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="none" ' +
+    'stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12h13M12 5l7 7-7 7"/></svg>';
+
+  function iconoLinea(name) {
+    return (
+      '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="none" ' +
+      'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      (ICONOS_LINEA[name] || ICONOS_LINEA.otro) + "</svg>"
+    );
+  }
+
   function esc(value) {
     return String(value).replace(/[&<>"']/g, function (ch) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
@@ -99,9 +124,10 @@
     el.href = "tel:+" + String(cfg.whatsappNumber || "").replace(/\D/g, "");
   });
 
-  function waButton(label, message, extraClass) {
+  /* `clase` cambia el estilo: btn-wa es el verde lleno, btn-soft el discreto. */
+  function waButton(label, message, clase) {
     return (
-      '<a class="btn-wa' + (extraClass ? " " + extraClass : "") + '" href="' +
+      '<a class="' + (clase || "btn-wa") + '" href="' +
       esc(waLink(message)) + '">' + WA_ICON + esc(label) + "</a>"
     );
   }
@@ -144,13 +170,16 @@
       return srv ? { src: srv.imagen, alt: srv.alt || "" } : null;
     }
 
+    /* La foto va de fondo y el texto encima. El alt queda vacío a propósito:
+       el enlace ya se nombra con su título, y la descripción de la foto
+       solo haría más largo lo que lee un lector de pantalla. */
     caminos.innerHTML = cfg.caminos.items.map(function (via) {
       var foto = fotoDe(via);
       return (
         '<a class="camino" href="' + esc(via.destino) + '">' +
           '<span class="camino__media">' +
             (foto && foto.src
-              ? '<img src="' + esc(foto.src) + '" alt="' + esc(foto.alt) + '" ' +
+              ? '<img src="' + esc(foto.src) + '" alt="" ' +
                 'width="800" height="600" loading="lazy" decoding="async">'
               : "") +
           "</span>" +
@@ -159,17 +188,16 @@
               '<span class="camino__titulo">' + esc(via.titulo) + "</span>" +
               '<span class="camino__nota">' + esc(via.nota || "") + "</span>" +
             "</span>" +
-            '<span class="camino__flecha" aria-hidden="true">' +
-              '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="currentColor" ' +
-              'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12h13M12 5l7 7-7 7"/></svg>' +
-            "</span>" +
+            '<span class="camino__flecha" aria-hidden="true">' + FLECHA + "</span>" +
           "</span>" +
         "</a>"
       );
     }).join("");
   }
 
-  /* Atajos de diagnóstico: cada uno abre WhatsApp con el síntoma ya escrito */
+  /* Atajos de diagnóstico: cada uno abre WhatsApp con el síntoma ya escrito.
+     Llevan un dibujo del caso y una flecha chica, no un botón verde: eran
+     ocho botones de WhatsApp seguidos y la página quedaba «llame ya». */
   var triage = document.getElementById("triage-grid");
   if (triage && cfg.diagnostico && cfg.diagnostico.items) {
     setText("diagnostico-titulo", cfg.diagnostico.titulo);
@@ -177,8 +205,9 @@
     triage.innerHTML = cfg.diagnostico.items.map(function (item) {
       return (
         '<a class="triage__item" href="' + esc(waLink(item.mensaje)) + '">' +
+          '<span class="triage__ico" aria-hidden="true">' + iconoLinea(item.icono) + "</span>" +
           '<span class="triage__text">' + esc(item.etiqueta) + "</span>" +
-          '<span class="triage__go" aria-hidden="true">' + WA_ICON + "</span>" +
+          '<span class="triage__go" aria-hidden="true">' + FLECHA + "</span>" +
         "</a>"
       );
     }).join("");
@@ -209,8 +238,12 @@
   /* Sección de cámaras frigoríficas */
   var cam = cfg.camaras;
   if (cam) {
-    setText("camaras-titulo", cam.titulo);
-    setText("camaras-bajada", cam.bajada);
+    /* El título, la lista y el botón salen de `rubros`. Acá va lo técnico,
+       que está plegado en «Ver más». */
+    if (cam.mas) {
+      setText("camaras-mas-titulo", cam.mas.titulo);
+      setText("camaras-mas-sub", cam.mas.detalle);
+    }
     if (cam.porQue) {
       setText("camaras-porque-titulo", cam.porQue.titulo);
       setText("camaras-porque-texto", cam.porQue.texto);
@@ -234,7 +267,6 @@
     if (cam.dimensionar) {
       setText("camaras-dim-titulo", cam.dimensionar.titulo);
       setText("camaras-dim-texto", cam.dimensionar.texto);
-      setText("camaras-dim-resumen", cam.dimensionar.resumen);
       fill("camaras-dim-items", (cam.dimensionar.items || []).map(function (d) {
         return "<li>" + esc(d) + "</li>";
       }).join(""));
@@ -256,8 +288,10 @@
     });
   }
 
-  /* Las secciones de rubro: comercio y aire. La foto sale del servicio que
-     nombra `servicio`, para no incrustar el mismo archivo dos veces. */
+  /* Las secciones de rubro: cámaras, comercio, aire y mantenimiento. La foto
+     sale del servicio que nombra `servicio`, para no incrustar el mismo
+     archivo dos veces. El botón es el discreto (btn-soft): el verde lleno
+     queda para el inicio, el formulario y el botón flotante. */
   (cfg.rubros || []).forEach(function (rubro) {
     var caja = document.getElementById(rubro.id + "-cuerpo");
     if (!caja) return;
@@ -267,6 +301,7 @@
     var srv = (cfg.services || []).filter(function (x) {
       return x.id === rubro.servicio;
     })[0];
+    var mensaje = rubro.mensaje || (cfg.messages && cfg.messages[rubro.id]);
 
     caja.innerHTML =
       (srv && srv.imagen
@@ -276,53 +311,26 @@
           "</div>"
         : "") +
       '<div class="rubro__body">' +
+        (rubro.etiqueta ? '<p class="panel__label">' + esc(rubro.etiqueta) + "</p>" : "") +
         '<ul class="ticks">' +
           (rubro.puntos || []).map(function (p) {
             return "<li>" + esc(p) + "</li>";
           }).join("") +
         "</ul>" +
+        (rubro.para && rubro.para.length
+          ? '<p class="panel__label">Para</p><ul class="chips">' +
+              rubro.para.map(function (p) {
+                return "<li>" + esc(p) + "</li>";
+              }).join("") +
+            "</ul>"
+          : "") +
         '<div class="rubro__accion">' +
-          waButton(rubro.accion || "Consultar por WhatsApp", rubro.mensaje) +
+          waButton(rubro.accion || "Consultar por WhatsApp", mensaje, "btn-soft") +
         "</div>" +
       "</div>";
   });
 
   setText("camaras-tambien", cfg.camaras && cfg.camaras.tambien);
-
-  var camarasBox = document.getElementById("camaras-acciones");
-  if (camarasBox && cfg.services) {
-    var camaras = null;
-    cfg.services.forEach(function (service) {
-      if (service.id === "camaras") camaras = service;
-    });
-    var acciones = (camaras && camaras.acciones) || [];
-    camarasBox.innerHTML = acciones.map(function (action) {
-      return (
-        '<article class="choice">' +
-          "<h3>" + esc(action.etiqueta) + "</h3>" +
-          waButton("Consultar por WhatsApp", action.mensaje) +
-        "</article>"
-      );
-    }).join("");
-  }
-
-  var planes = document.getElementById("propuestas");
-  if (planes && cfg.propuestas) {
-    planes.innerHTML = cfg.propuestas.map(function (plan) {
-      var items = (plan.incluye || []).map(function (item) {
-        return "<li>" + esc(item) + "</li>";
-      }).join("");
-      return (
-        '<article class="plan' + (plan.destacado ? " plan--top" : "") + '">' +
-          (plan.destacado ? '<p class="plan__flag">La más elegida para comercios</p>' : "") +
-          "<h3>" + esc(plan.titulo) + "</h3>" +
-          "<p>" + esc(plan.detalle || "") + "</p>" +
-          '<ul class="ticks">' + items + "</ul>" +
-          waButton("Armar una propuesta", plan.mensaje) +
-        "</article>"
-      );
-    }).join("");
-  }
 
   var clientes = document.getElementById("clientes");
   if (clientes && cfg.showClientLogos) {
@@ -486,7 +494,7 @@
   /* Entradas al hacer scroll. Los hijos de una grilla entran escalonados:
      cada uno lleva --i y el CSS lo convierte en un retardo. */
   if (!quieto.matches && "IntersectionObserver" in window) {
-    var GRILLAS = "#caminos-grid, #trust-list, #triage-grid, .rubro .ticks, #propuestas, #steps-list, #zonas-list, .camaras__grid, .temps, .chips, .acc";
+    var GRILLAS = "#caminos-grid, #trust-list, #triage-grid, .rubro .ticks, #steps-list, #zonas-list, .chips, .acc";
 
     document.querySelectorAll(GRILLAS).forEach(function (grilla) {
       var hijos = grilla.children;

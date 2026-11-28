@@ -44,7 +44,6 @@
   --alert: #a8410e;
   --wrap: min(1120px, calc(100% - 32px));
   --header-h: 72px;
-  --callbar-h: 56px;
 }
 
 *,
@@ -104,36 +103,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
   outline-offset: 2px;
 }
 
-.call-bar {
-  position: sticky;
-  top: 0;
-  z-index: 60;
-  height: var(--callbar-h);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 12px;
-  background: linear-gradient(90deg, #071536 0%, #0b1f4d 45%, #1565c0 100%);
-}
-.call-now {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: #fff;
-  color: #0b1f4d;
-  font-weight: 800;
-  text-decoration: none;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
-}
-.call-now__num { font-weight: 700; }
-
 .site-header {
   position: sticky;
-  top: var(--callbar-h);
+  top: 0;
   z-index: 50;
   background: #fff;
   border-bottom: 1px solid var(--line);
@@ -240,7 +212,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border-bottom: 1px solid var(--line);
   padding: 8px 16px 16px;
   box-shadow: 0 16px 30px rgba(11, 31, 77, 0.08);
-  max-height: calc(100dvh - var(--header-h) - var(--callbar-h));
+  max-height: calc(100dvh - var(--header-h));
   overflow-y: auto;
 }
 .site-nav.is-open { display: block; animation: entra 0.28s var(--salida) both; }
@@ -278,21 +250,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   color: var(--cyan);
 }
 .hero__actions { display: grid; gap: 10px; }
-.btn-call {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 10px 20px;
-  border-radius: 999px;
-  background: transparent;
-  color: #fff;
-  border: 2px solid rgba(255, 255, 255, 0.72);
-  font-weight: 800;
-  text-decoration: none;
-  width: 100%;
-}
-.btn-call:hover { background: #fff; color: #0b1f4d; border-color: #fff; }
 /* z-index 1: el texto por encima de la foto y de la cortina. */
 .hero__inner { position: relative; z-index: 1; display: flex; flex-direction: column; }
 .hero__copy {
@@ -300,13 +257,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
      posicionada, así que sin esto se pinta encima y tapa el texto. */
   position: relative;
   z-index: 1;
-  padding: 40px 20px 44px;
-  width: min(1120px, 100%);
+  padding: 40px 0 44px;
+  /* El mismo ancho que el resto de la página: así el texto arranca alineado
+     con el logo del encabezado. */
+  width: var(--wrap);
   margin-inline: auto;
-  min-height: 72svh;
+  min-height: 78svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* En el celu el texto va abajo y la foto se ve arriba. */
+  justify-content: flex-end;
 }
 .hero h1 {
   margin-bottom: 14px;
@@ -322,12 +282,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   max-width: 54ch;
 }
 .hero__copy p { color: #e7f1fa; max-width: 62ch; }
-.hero__zone { font-weight: 600; color: #fff; margin-bottom: 20px; }
-.hero__note {
-  margin: 14px 0 0;
-  font-size: 0.95rem;
-  color: #cfe2f5;
-}
 .hero__media {
   position: absolute;
   inset: 0;
@@ -341,22 +295,23 @@ button, input, select, textarea { font: inherit; color: inherit; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 62% center;
+  /* En el celu se corre a la izquierda, donde está el técnico. */
+  object-position: 18% center;
 }
-/* La cortina. Está calculada, no elegida a ojo: en su punto más claro deja
-   el fondo al 70 % de azul, y ahí el texto blanco da 7:1 de contraste aun
-   si la foto fuera blanca. Así cualquier foto que ponga Martín más adelante
-   sigue siendo legible sin tocar el CSS. */
+/* La cortina. Está calculada, no elegida a ojo: donde va el texto deja el
+   fondo al 84 % de azul o más, y ahí el texto blanco da más de 10:1 de
+   contraste aun si la foto fuera blanca. Arriba, donde no hay texto, queda
+   clara para que la foto se vea. Así cualquier foto que ponga Martín más
+   adelante sigue siendo legible sin tocar el CSS. */
 .hero__media::after {
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(103deg,
-      rgba(7, 21, 54, 0.86) 0%,
-      rgba(7, 21, 54, 0.60) 58%,
-      rgba(7, 21, 54, 0.50) 100%),
-    rgba(7, 21, 54, 0.4);
+  background: linear-gradient(to top,
+    rgba(7, 21, 54, 0.92) 0,
+    rgba(7, 21, 54, 0.84) 420px,
+    rgba(7, 21, 54, 0.38) 600px,
+    rgba(7, 21, 54, 0.30) 100%);
   pointer-events: none;
 }
 
@@ -549,18 +504,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .temp__detail { margin: 0; color: var(--muted); font-size: 0.93rem; }
 
-.address-bar {
-  margin: 0;
-  background: var(--navy);
-  color: #fff;
-  text-align: center;
-  padding: 16px 18px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.care { background: var(--ice); }
-.care__grid { display: grid; gap: 18px; }
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -570,7 +513,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   list-style: none;
 }
 .chips li {
-  background: #fff;
+  background: var(--mist);
+  border: 1px solid var(--line);
   color: var(--navy);
   border-radius: 999px;
   padding: 8px 12px;
@@ -739,7 +683,9 @@ textarea[aria-invalid="true"] { border-color: var(--danger); }
   letter-spacing: -0.02em;
 }
 .site-footer p { margin: 8px 0 0; }
-.legal {
+/* .site-footer .legal y no .legal: si no, «.site-footer p» le gana y le
+   saca el margen automático, y el renglón queda pegado a la izquierda. */
+.site-footer .legal {
   width: var(--wrap);
   margin: 22px auto 0;
   color: #b7c7d8;
@@ -747,7 +693,8 @@ textarea[aria-invalid="true"] { border-color: var(--danger); }
 }
 
 .wa-float {
-  display: none;
+  /* El único botón que sigue al que baja: chico, en la esquina. */
+  display: grid;
   position: fixed;
   right: calc(16px + env(safe-area-inset-right));
   bottom: calc(16px + env(safe-area-inset-bottom));
@@ -763,30 +710,6 @@ textarea[aria-invalid="true"] { border-color: var(--danger); }
 }
 .wa-float:hover { background: var(--wa-hover); color: #fff; }
 .wa-float svg { width: 30px; height: 30px; }
-
-.mobile-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 50;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  background: #fff;
-  border-top: 1px solid var(--line);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.mobile-bar a {
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  text-decoration: none;
-}
-.mobile-bar__call { color: var(--navy); background: #fff; }
-.mobile-bar__wa { color: #fff; background: var(--wa); }
-.mobile-bar__wa:hover { background: var(--wa-hover); color: #fff; }
 
 .steps__list {
   list-style: none;
@@ -811,34 +734,6 @@ textarea[aria-invalid="true"] { border-color: var(--danger); }
 .steps__list h3 { margin: 0 0 6px; font-size: 1.15rem; }
 .steps__list p:last-child { margin: 0; color: var(--muted); }
 
-.choices, .plans { display: grid; gap: 14px; margin-top: 22px; }
-.choice, .plan {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 16px;
-}
-.plan { display: flex; flex-direction: column; }
-.plan--top { border: 2px solid var(--blue); box-shadow: 0 12px 30px rgba(21, 101, 192, 0.14); }
-.plan__flag {
-  display: inline-block;
-  align-self: flex-start;
-  margin: -4px 0 10px;
-  background: var(--ice);
-  color: var(--navy);
-  border-radius: 999px;
-  padding: 5px 11px;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.choice h3, .plan h3 { margin: 0 0 8px; font-size: 1.15rem; }
-.plan p, .choice p { color: var(--muted); }
-.plan .ticks { margin: 0 0 16px; }
-.plan .btn-wa { margin-top: auto; }
-.choice .btn-wa, .plan .btn-wa { width: 100%; }
-
 .measures {
   border: 0;
   margin: 0;
@@ -859,7 +754,7 @@ textarea[aria-invalid="true"] { border-color: var(--danger); }
 
 /* Los anclados tienen que quedar debajo del encabezado pegajoso.
    .card[id] incluido: a esas tarjetas les apuntan los tres caminos. */
-section, .address-bar, .card[id] { scroll-margin-top: 140px; }
+section, .card[id] { scroll-margin-top: 84px; }
 
 /* ---- Entradas y transiciones ---- */
 /* Curva propia: arranca rápido y frena suave. */
@@ -894,16 +789,12 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
 .hero__eyebrow { animation-delay: 0.05s; }
 .hero h1 { animation-delay: 0.12s; }
 .hero__lead { animation-delay: 0.2s; }
-.hero__zone { animation-delay: 0.28s; }
-.hero__actions { animation-delay: 0.36s; }
-.hero__note { animation-delay: 0.44s; }
+.hero__actions { animation-delay: 0.3s; }
 .hero__media img { animation: acerca 1.5s var(--salida) both; }
 
 /* Levantar al pasar el mouse. Va después de .rise para ganarle en el orden. */
 .card,
 .triage__item,
-.plan,
-.choice,
 .panel,
 .zonas__list li {
   transition:
@@ -915,12 +806,12 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
 @media (hover: hover) {
   .card:hover { transform: translateY(-5px); box-shadow: 0 24px 52px rgba(11, 31, 77, 0.2); }
   .triage__item:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(11, 31, 77, 0.12); }
-  .plan:hover, .choice:hover, .panel:hover { transform: translateY(-3px); }
+  .panel:hover { transform: translateY(-3px); }
   .zonas__list li:hover { background: var(--ice); border-color: var(--cyan); }
-  .btn-wa, .btn-call, .call-now { transition: transform 0.18s var(--salida), background-color 0.2s ease, color 0.2s ease; }
-  .btn-wa:hover, .btn-call:hover, .call-now:hover { transform: translateY(-2px); }
+  .btn-wa, .btn-soft, .btn-light { transition: transform 0.18s var(--salida), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+  .btn-wa:hover, .btn-soft:hover, .btn-light:hover { transform: translateY(-2px); }
 }
-.btn-wa:active, .btn-call:active, .call-now:active, .triage__item:active { transform: translateY(1px); }
+.btn-wa:active, .btn-soft:active, .btn-light:active, .triage__item:active { transform: translateY(1px); }
 
 /* Acordeón: la altura la anima el JS, acá va la curva. */
 .acc__panel { transition: height 0.32s var(--salida); }
@@ -1020,17 +911,15 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
 
 
 @media (max-width: 719px) {
-  .hero__copy { padding: 20px 16px 24px; }
+  .hero__copy { padding: 20px 0 22px; }
   .hero h1 { margin-bottom: 10px; }
-  .hero__lead { font-size: 1.02rem; margin-bottom: 8px; }
-  .hero__zone { margin-bottom: 16px; }
-  .btn-call, .hero .btn-wa { min-height: 50px; }
+  .hero__lead { font-size: 1.02rem; margin-bottom: 18px; }
+  .hero .btn-wa { min-height: 50px; }
 }
 @media (max-width: 380px) {
   .brand__mark { width: 36px; height: 36px; }
   .brand__name { font-size: 0.92rem; }
   .brand__tag { font-size: 0.48rem; letter-spacing: 0.04em; }
-  .call-now { font-size: 0.92rem; gap: 6px; padding: 6px 12px; }
   .triage__item { font-size: 0.95rem; padding-left: 14px; }
 }
 
@@ -1039,27 +928,23 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
   .triage__grid { grid-template-columns: 1fr 1fr; }
   .temps { grid-template-columns: repeat(3, 1fr); }
   .closer__actions { grid-template-columns: auto auto; justify-content: center; max-width: none; }
-  .closer .btn-wa, .closer .btn-call { width: auto; padding-inline: 26px; }
+  .closer .btn-light { padding-inline: 26px; }
 }
 
 @media (min-width: 720px) {
-  .hero__copy { padding: 48px 24px; }
+  .hero__copy { padding: 48px 0; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .form-row--3 { grid-template-columns: 1fr 1fr 1fr; }
-  .choices { grid-template-columns: 1fr 1fr; }
   .steps__list { grid-template-columns: repeat(2, 1fr); gap: 24px; }
   .shots { grid-template-columns: repeat(3, 1fr); }
   .footer__grid { grid-template-columns: 1.1fr 1fr; align-items: center; }
-  .care__grid { grid-template-columns: 1.4fr 1fr; align-items: center; }
-  .hero .btn-wa, .hero .btn-call, .care .btn-wa { width: auto; }
+  .hero .btn-wa { width: auto; }
   .hero__actions { grid-template-columns: auto auto; justify-content: start; }
   .camaras__grid { grid-template-columns: 1fr 1fr; }
   .ticks--two { grid-template-columns: 1fr 1fr; gap: 8px 22px; }
 }
 
 @media (min-width: 880px) {
-  .mobile-bar { display: none; }
-  .wa-float { display: grid; }
   .trust__list { grid-template-columns: repeat(4, 1fr); }
   .nav-toggle { display: none; }
   .site-nav {
@@ -1104,9 +989,8 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
   }
   .steps__list { grid-template-columns: repeat(4, 1fr); }
   .triage__grid { grid-template-columns: repeat(4, 1fr); }
-  .triage__item { flex-direction: column; align-items: flex-start; gap: 14px; min-height: 118px; }
-  .triage__text { order: 2; }
-  .triage__go { order: 1; }
+  .triage__item { flex-direction: column; align-items: flex-start; gap: 14px; min-height: 132px; }
+  .triage__go { position: absolute; top: 18px; right: 16px; }
 }
 
 @media (min-width: 960px) {
@@ -1115,14 +999,24 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
      oscura de la cortina; la foto se ve a la derecha. */
   .hero__copy {
     min-height: 600px;
-    padding: 64px 40px 64px max(24px, calc((100% - 1120px) / 2 + 16px));
+    padding: 64px 0;
+    justify-content: center;
+  }
+  .hero__media img { object-position: 62% center; }
+  /* En la compu el texto va a la izquierda: la cortina es oscura hasta donde
+     termina el texto (el borde de la columna más 560px) y después se aclara. */
+  .hero__media::after {
+    background: linear-gradient(90deg,
+      rgba(7, 21, 54, 0.90) 0,
+      rgba(7, 21, 54, 0.82) calc(max(16px, 50% - 560px) + 560px),
+      rgba(7, 21, 54, 0.40) calc(max(16px, 50% - 560px) + 860px),
+      rgba(7, 21, 54, 0.28) 100%);
   }
   .hero__copy > * { max-width: 36rem; }
 }
 
 @media (min-width: 900px) {
   .cards { grid-template-columns: 1fr 1fr; }
-  .plans { grid-template-columns: repeat(3, 1fr); align-items: stretch; }
 }
 
 @media (min-width: 1100px) {
@@ -1276,7 +1170,6 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
   gap: 18px;
 }
 .rubro__body .ticks { gap: 10px; }
-.rubro__accion .btn-wa { width: 100%; }
 
 /* El renglón de lo que entra en cámaras sin ser un rubro aparte */
 .section__also {
@@ -1291,8 +1184,259 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
     gap: 30px;
     align-items: center;
   }
-  .rubro__accion .btn-wa { width: auto; }
+  /* Foto a la derecha en las secciones invertidas: zig-zag al bajar. */
+  .rubro--invertido .rubro__media { order: 2; }
 }
+
+/* ---- Ronda estética: menos «llame ya», más foto ---- */
+/* Los títulos se cortan parejo, sin una palabra sola en el último renglón. */
+h1, h2, h3 { text-wrap: balance; }
+
+/* Raya cian arriba de cada título de sección: marca el ritmo al bajar. */
+.section h2::before {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 4px;
+  margin-bottom: 14px;
+  border-radius: 2px;
+  background: var(--cyan);
+}
+
+/* Inicio: el segundo paso es un enlace, no otro botón. */
+.hero__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 6px;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+.hero__link:hover { color: var(--cyan); }
+.hero__link svg { transition: transform 0.25s var(--salida); }
+.hero__link:hover svg { transform: translateY(3px); }
+
+/* Botón discreto de WhatsApp: blanco, con el ícono verde. El verde lleno
+   queda solo para el inicio, el formulario y el botón flotante. */
+.btn-soft,
+.btn-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 11px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-soft {
+  background: #fff;
+  color: var(--navy);
+  border: 1.5px solid #c5d2e0;
+}
+.btn-soft:hover { border-color: var(--wa); background: #f3fbf6; color: var(--navy); }
+.btn-soft svg,
+.btn-light svg { flex: none; color: var(--wa); }
+/* La versión para fondo azul */
+.btn-light {
+  background: #fff;
+  color: var(--navy);
+  border: 0;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+.btn-light:hover { background: var(--ice); color: var(--navy); }
+.zonas .btn-soft { margin-top: 18px; }
+
+/* Franja de confianza: en el celu, dos por dos con el ícono arriba. */
+@media (max-width: 879px) {
+  .trust__list { grid-template-columns: 1fr 1fr; gap: 18px 16px; }
+  .trust__list li { flex-direction: column; gap: 6px; }
+}
+
+/* Caminos: la foto entera y el texto encima. En el celu son bajitas
+   para que las tres entren en una pantalla. */
+.camino {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  aspect-ratio: 16 / 7;
+  border: 0;
+  background: var(--navy);
+  color: #fff;
+}
+.camino__media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  aspect-ratio: auto;
+}
+/* Oscuro abajo, donde va el texto: ahí el blanco da 6,8:1 o más con
+   cualquier foto. */
+.camino__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+    rgba(7, 21, 54, 0.92) 0%,
+    rgba(7, 21, 54, 0.72) 42%,
+    rgba(7, 21, 54, 0.12) 100%);
+}
+.camino__body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14px 16px 16px;
+}
+.camino__titulo { color: #fff; font-size: 1.12rem; }
+.camino__nota {
+  margin-top: 3px;
+  font-size: 0.9rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #d8e7f7;
+}
+.camino__flecha {
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+}
+@media (hover: hover) {
+  .camino:hover .camino__flecha { background: var(--cyan); border-color: var(--cyan); color: var(--navy); }
+}
+@media (min-width: 700px) {
+  .camino { aspect-ratio: 4 / 3; }
+}
+
+/* Diagnóstico: un dibujo del caso y una flecha chica. */
+.triage { background: #fff; }
+.triage__item {
+  position: relative;
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 12px 16px 12px 12px;
+  border-left: 1px solid var(--line);
+  box-shadow: none;
+}
+.triage__item:hover { border-color: var(--cyan); background: #fff; }
+.triage__ico {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--ice);
+  color: var(--blue);
+}
+.triage__text { flex: 1; }
+.triage__go {
+  width: auto;
+  height: auto;
+  background: none;
+  color: var(--blue);
+  transition: transform 0.25s var(--salida);
+}
+.triage__go svg { width: 18px; height: 18px; }
+@media (hover: hover) {
+  .triage__item:hover .triage__go { transform: translateX(3px); }
+}
+
+/* Rubros */
+.rubro__body .panel__label { margin: 0 0 -8px; }
+.rubro__body .chips { margin: 0; }
+
+/* «Ver más» de cámaras como una tarjeta que se abre */
+.more--card { margin-top: 26px; }
+.more--card summary {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--navy);
+  transition: border-color 0.25s var(--salida);
+}
+.more--card summary:hover { border-color: var(--cyan); }
+.more--card summary::after { flex: none; color: var(--blue); }
+.more__texto { display: block; }
+.more__titulo { display: block; font-weight: 800; font-size: 1.05rem; }
+.more__sub { display: block; margin-top: 2px; font-weight: 500; font-size: 0.93rem; color: var(--muted); }
+
+/* Cómo trabajamos: la única sección azul del medio, con una línea que une
+   los pasos. */
+.steps {
+  background:
+    radial-gradient(700px 320px at 92% 0%, rgba(30, 200, 240, 0.16), transparent 60%),
+    linear-gradient(165deg, #071536 0%, #0b1f4d 60%, #13406f 100%);
+  color: #fff;
+}
+.steps h2,
+.steps__list h3 { color: #fff; }
+.steps .lead,
+.steps__list p:last-child { color: #cfe2f5; }
+.steps__list li { position: relative; padding-left: 58px; }
+.steps__num {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  background: transparent;
+  border: 2px solid var(--cyan);
+  color: var(--cyan);
+}
+.steps__list li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: 46px;
+  bottom: -14px;
+  width: 2px;
+  background: rgba(30, 200, 240, 0.35);
+}
+@media (min-width: 720px) {
+  .steps__list li { padding-left: 0; padding-top: 56px; }
+  .steps__list li:not(:last-child)::before {
+    left: 52px;
+    right: -18px;
+    top: 19px;
+    bottom: auto;
+    width: auto;
+    height: 2px;
+  }
+  /* En dos columnas la línea no cruza de un renglón al otro. */
+  .steps__list li:nth-child(2n)::before { display: none; }
+}
+@media (min-width: 880px) {
+  .steps__list li:nth-child(2n)::before { display: block; }
+  .steps__list li:last-child::before { display: none; }
+}
+
+/* Zonas, contacto y pie */
+.zonas__base {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 0;
+  font-weight: 700;
+  color: var(--navy);
+}
+.zonas__base svg { flex: none; color: var(--blue); }
+.contact-alt { margin: 16px 0 0; text-align: center; color: var(--muted); }
+.contact-alt a { color: var(--navy); font-weight: 700; }
+.footer__tel { color: #cfe2f5; font-size: 0.95rem; }
+.footer__tel:hover { color: #fff; }
 
 /* Quien pidió menos movimiento en su sistema no ve ninguna animación. */
 @media (prefers-reduced-motion: reduce) {
@@ -1312,8 +1456,6 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
   .acc__panel,
   .card,
   .triage__item,
-  .plan,
-  .choice,
   .panel,
   .zonas__list li,
   .site-nav a::after,
@@ -1326,10 +1468,12 @@ section, .address-bar, .card[id] { scroll-margin-top: 140px; }
   .camino:hover .camino__flecha { transform: none; }
   .card:hover,
   .triage__item:hover,
-  .plan:hover,
-  .choice:hover,
   .panel:hover,
   .btn-wa:hover,
-  .btn-call:hover,
-  .call-now:hover { transform: none; }
+  .btn-soft:hover,
+  .btn-light:hover,
+  .hero__link:hover svg,
+  .triage__item:hover .triage__go { transform: none; }
+  .hero__link svg,
+  .triage__go { transition: none; }
 }

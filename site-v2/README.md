@@ -45,16 +45,16 @@ Abrí `js/config.js`.
 | `whatsappNumber` | Número para los links `wa.me`, solo dígitos. Hoy: `5491157303266`. |
 | `whatsappDisplay` | Cómo se muestra el teléfono. Hoy: `+54 9 11 5730-3266`. |
 | `metaPixelId` | Píxel de Meta. **Vacío = no se carga nada y no se rastrea a nadie.** Con el ID puesto, la página avisa a Meta la visita (`PageView`), cada clic en WhatsApp o llamar (`Contact`) y cada envío del formulario (`Lead`). Antes de activarlo, leé la nota de abajo. |
-| `addressLine` | Franja y footer. Hoy: `Juan María Gutiérrez · Berazategui`. |
+| `addressLine` | «Dónde trabajamos» y footer. Hoy: `Juan María Gutiérrez · Berazategui`. |
 | `zonas` | Texto de cobertura en el inicio, la FAQ y el footer. |
 | `localidades` | Chips de la sección «Dónde trabajamos». **Falta que Martín confirme la lista.** |
 | `confianza` | Franja de cuatro ítems debajo del inicio. `icono` acepta `truck`, `pin`, `store`, `chat` o `snow`. |
-| `diagnostico` | Atajos de síntomas del inicio. Cada ítem abre WhatsApp con el problema ya escrito. |
+| `caminos` | Las tres fotos de «¿Qué venís a hacer?». Cada una lleva a una sección. |
+| `rubros` | Las secciones de cámaras, comercio, aire y mantenimiento: `titulo`, `bajada`, `puntos`, `accion` (texto del botón) y `mensaje` (texto de WhatsApp; si falta, usa `messages` con el mismo id). La foto sale del servicio que nombra `servicio`. Opcionales: `etiqueta` (título arriba de la lista) y `para` (chips de a quién va dirigido). |
+| `diagnostico` | Atajos de síntomas del inicio. Cada ítem abre WhatsApp con el problema ya escrito. `icono` elige el dibujo: `termometro`, `hielo`, `heladera`, `ruido`, `split`, `nueva`, `agenda` u `otro` (están en `ICONOS_LINEA`, en `main.js`). |
 | `pasos` | Los pasos de «Cómo trabajamos». |
-| `camaras` | Todo el contenido de la sección de cámaras frigoríficas: señales de falla, conservación/congelación y qué define el equipo. |
+| `camaras` | Lo técnico de cámaras, plegado en «Ver más»: `mas` (título y bajada del desplegable), señales de falla, conservación/congelación y qué define el equipo. El título, la lista y el botón de la sección están en `rubros`. |
 | `services` | Tarjetas de servicios y opciones del formulario. Cada una tiene `titulo`, `descripcion`, `imagen`, `alt`, `mensaje` (texto de WhatsApp) y `destacado`. |
-| `services[].acciones` | Si un servicio tiene este array (`etiqueta` y `mensaje`), la tarjeta muestra un botón de WhatsApp por acción. Hoy lo usa cámaras frigoríficas. |
-| `propuestas` | Las tres propuestas de mantenimiento, sin precios. `destacado: true` la resalta. |
 | `trabajos` | Galería. Dejala vacía hasta tener fotos reales. Cada ítem: `{ titulo, descripcion, imagen, alt }`. |
 | `showTrabajos` | `false` oculta la sección Trabajos y su ítem del menú. |
 | `showAntesDespues` | `false` oculta Antes y después. |
@@ -111,6 +111,9 @@ Dos cosas a tener en cuenta antes:
 
 - **No hay mapa.** Se sacó a pedido y no se vuelve a agregar.
 - **No hay datos inventados.** Ni años de experiencia, ni matrícula, ni cantidad de clientes, ni reseñas, ni garantías, ni urgencias 24 horas, ni precios. La competencia del rubro publica varias de esas cosas; acá no se ponen hasta que Martín las confirme.
+- **No hay «Llamar ahora» ni barra de llamar.** Se sacaron a pedido: la página no tiene que ser «llame ya». El teléfono queda en un renglón discreto debajo del formulario y en el pie.
+- **Pocos botones verdes.** El verde lleno de WhatsApp va solo en el inicio, el formulario y el botón flotante. Los de cada sección son blancos (`btn-soft`), y el del cierre también (`btn-light`).
+- **No hay planes de mantenimiento.** Se sacaron a pedido. La sección explica qué incluye cada visita y se arma la propuesta por WhatsApp.
 - **Trabajos, Antes y después, Reseñas y Clientes están ocultos**, no borrados. Se activan desde `config.js` cuando haya material real.
 
 ## Pendiente de confirmar con Martín
